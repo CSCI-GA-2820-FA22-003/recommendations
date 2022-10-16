@@ -5,6 +5,7 @@ All of the models are stored in this module
 """
 import logging
 from flask_sqlalchemy import SQLAlchemy
+from enum import Enum
 
 logger = logging.getLogger("flask.app")
 
@@ -15,65 +16,84 @@ db = SQLAlchemy()
 class DataValidationError(Exception):
     """ Used for an data validation errors when deserializing """
 
-    pass
+class RecommendationType(Enum):
+    """Enumeration of valid Recommendation Types"""
 
+    CROSS_SELL = 0
+    UP_SELL = 1
+    ACCESSORY = 2
+    UNKNOWN = 3
 
-class YourResourceModel(db.Model):
+class Recommendation(db.Model):
     """
-    Class that represents a YourResourceModel
+    Class that represents a Recommendation
     """
 
     app = None
 
     # Table Schema
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(63))
+    product_1 = db.Column(db.String(63), nullable=False)
+    product_2 = db.Column(db.String(63), nullable=False)
+    recommendation_type = db.Column(
+        db.Enum(RecommendationType), nullable=False, server_default=(RecommendationType.UNKNOWN.name)
+    )
+    liked = db.Column(db.Boolean())
 
     def __repr__(self):
-        return "<YourResourceModel %r id=[%s]>" % (self.name, self.id)
+        return f"<Recommendation {self.product_1} and {self.product_2} id=[{self.id}]>"
 
     def create(self):
         """
-        Creates a YourResourceModel to the database
+        Creates a Recommendation to the database
         """
-        logger.info("Creating %s", self.name)
+        logger.info("Creating Recommendation for %s and %s", self.product_1, self.product_2)
         self.id = None  # id must be none to generate next primary key
         db.session.add(self)
         db.session.commit()
 
     def update(self):
         """
-        Updates a YourResourceModel to the database
+        Updates a Recommendation to the database
         """
-        logger.info("Saving %s", self.name)
+        logger.info("Saving Recommendation %s and %s", self.product_1, self.product_2)
+        if not self.id:
+            raise DataValidationError("Update called with empty ID field")
         db.session.commit()
 
     def delete(self):
-        """ Removes a YourResourceModel from the data store """
-        logger.info("Deleting %s", self.name)
+        """ Removes a Recommendation from the data store """
+        logger.info("Deleting Recommendation %s and %s", self.product_1, self.product_2)
         db.session.delete(self)
         db.session.commit()
 
     def serialize(self):
-        """ Serializes a YourResourceModel into a dictionary """
-        return {"id": self.id, "name": self.name}
+        """ Serializes a Recommendation into a dictionary """
+        return {
+            "id": self.id,
+            "product_1": self.product_1,
+            "product_2": self.product_2,
+            "recommendation_type": self.recommendation_type.name, # convert enum to string
+            "liked": self.liked
+        }
+
 
     def deserialize(self, data):
         """
-        Deserializes a YourResourceModel from a dictionary
+        Deserializes a Recommendation from a dictionary
 
         Args:
             data (dict): A dictionary containing the resource data
         """
         try:
-            self.name = data["name"]
+            self.id = data["id"]
         except KeyError as error:
             raise DataValidationError(
-                "Invalid YourResourceModel: missing " + error.args[0]
+                "Invalid Recommendation: missing " + error.args[0]
             )
         except TypeError as error:
             raise DataValidationError(
-                "Invalid YourResourceModel: body of request contained bad or no data - "
+                "Invalid Recommendation: body of request contained bad or no data - "
                 "Error message: " + error
             )
         return self
@@ -90,22 +110,12 @@ class YourResourceModel(db.Model):
 
     @classmethod
     def all(cls):
-        """ Returns all of the YourResourceModels in the database """
+        """ Returns all of the Recommendation in the database """
         logger.info("Processing all YourResourceModels")
         return cls.query.all()
 
     @classmethod
     def find(cls, by_id):
-        """ Finds a YourResourceModel by it's ID """
+        """ Finds a Recommendation by it's ID """
         logger.info("Processing lookup for id %s ...", by_id)
         return cls.query.get(by_id)
-
-    @classmethod
-    def find_by_name(cls, name):
-        """Returns all YourResourceModels with the given name
-
-        Args:
-            name (string): the name of the YourResourceModels you want to match
-        """
-        logger.info("Processing name query for %s ...", name)
-        return cls.query.filter(cls.name == name)
