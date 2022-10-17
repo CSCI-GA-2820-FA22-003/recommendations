@@ -15,7 +15,7 @@ from service.models import db, init_db, Recommendation
 from service.common import status
 from tests.factories import RecommendationFactory  # HTTP Status Codes
 from service import models
-
+from urllib.parse import quote_plus
 
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/testdb"
@@ -107,5 +107,21 @@ class TestYourResourceServer(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), 5)
+    
+    def test_query_recommendations_list_by_category(self):
+        """It should Query recommendations by Category"""
+        recommendations = self._create_recommendations(10)
+        test_category = recommendations[0].recommendation_type
+        category_recommendations = [recommendation for recommendation in recommendations if recommendation.recommendation_type == test_category]
+        response = self.app.get(
+            "/recommendations/list",
+            query_string="recommendation_type="+test_category.name
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), len(category_recommendations))
+        # check the data just to be sure
+        for recommendation in data:
+            self.assertEqual(recommendation["recommendation_type"], test_category.name)
 
 
