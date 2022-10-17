@@ -11,7 +11,7 @@ import logging
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
 from service import app
-from service.models import db
+from service.models import db, init_db, Recommendation
 from service.common import status
 from tests.factories import RecommendationFactory  # HTTP Status Codes
 from service import models
@@ -30,34 +30,42 @@ class TestYourResourceServer(TestCase):
 
     @classmethod
     def setUpClass(cls):
-        """ This runs once before the entire test suite """
-        pass
+        """Run once before all tests"""
+        app.config["TESTING"] = True
+        app.config["DEBUG"] = False
+        # Set up the test database
+        app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
+        app.logger.setLevel(logging.CRITICAL)
+        init_db(app)
 
     @classmethod
     def tearDownClass(cls):
         """ This runs once after the entire test suite """
-        pass
+        db.session.close()
 
     def setUp(self):
         """ This runs before each test """
         self.app = app.test_client()
+        db.session.query(Recommendation).delete()  # clean up the last tests
+        db.session.commit()
 
     def tearDown(self):
         """ This runs after each test """
-        pass
+        db.session.remove()
 
     def _create_recommendations(self, count):
         """Factory method to create recommendations in bulk"""
         recommendations = []
         for _ in range(count):
             test_recommendation = RecommendationFactory()
-            response = self.client.post(BASE_URL, json=test_recommendation.serialize())
+            response = self.app.post(BASE_URL, json=test_recommendation.serialize())
             self.assertEqual(
                 response.status_code, status.HTTP_201_CREATED, "Could not create test recommendation"
             )
             new_recommendation = response.get_json()
             test_recommendation.id = new_recommendation["id"]
             recommendations.append(test_recommendation)
+        logging.debug("Test Recommendation: %s", len(recommendations))
         return recommendations
 
     ######################################################################
@@ -86,8 +94,7 @@ class TestYourResourceServer(TestCase):
 
     def test_health(self):
         """It should be healthy"""
-        self.client = app.test_client()
-        response = self.client.get("/healthcheck")
+        response = self.app.get("/healthcheck")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(data["status"], 200)
@@ -95,9 +102,8 @@ class TestYourResourceServer(TestCase):
 
     def test_get_recommendations_list(self):
         """It should Get a list of recommendations"""
-        self.client = app.test_client()
         self._create_recommendations(5)
-        response = self.client.get("/recommendations/list")
+        response = self.app.get("/recommendations/list")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), 5)
