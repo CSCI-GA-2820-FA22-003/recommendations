@@ -16,6 +16,7 @@ db = SQLAlchemy()
 class DataValidationError(Exception):
     """ Used for an data validation errors when deserializing """
 
+
 class RecommendationType(Enum):
     """Enumeration of valid Recommendation Types"""
 
@@ -23,6 +24,7 @@ class RecommendationType(Enum):
     UP_SELL = 1
     ACCESSORY = 2
     UNKNOWN = 3
+
 
 class Recommendation(db.Model):
     """
@@ -73,10 +75,9 @@ class Recommendation(db.Model):
             "id": self.id,
             "product_1": self.product_1,
             "product_2": self.product_2,
-            "recommendation_type": self.recommendation_type.name, # convert enum to string
+            "recommendation_type": self.recommendation_type.name,  # convert enum to string
             "liked": self.liked
         }
-
 
     def deserialize(self, data):
         """
@@ -86,6 +87,11 @@ class Recommendation(db.Model):
             data (dict): A dictionary containing the resource data
         """
         try:
+            self.product_1 = data["product_1"]
+            self.product_2 = data["product_2"]
+            self.recommendation_type = data["recommendation_type"]
+            if isinstance(data["liked"], bool):
+                self.liked = data["liked"]
             self.id = data["id"]
         except KeyError as error:
             raise DataValidationError(
