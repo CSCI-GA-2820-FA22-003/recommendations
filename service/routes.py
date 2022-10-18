@@ -75,7 +75,7 @@ def create_recommendation():
 def list_recommendations():
     """Returns all of the Recommendations"""
     app.logger.info("Request for recommendations list")
-    pets = []
+    recommendations = []
     category = request.args.get("recommendation_type")
     if category:
         recommendations = Recommendation.find_by_category(category)
