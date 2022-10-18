@@ -142,3 +142,15 @@ class TestRecommendationModel(unittest.TestCase):
         # See if we get back 5 pets
         recommendations = Recommendation.all()
         self.assertEqual(len(recommendations), 5)
+
+    def test_find_by_category(self):
+        """It should Find recommendations by Category"""
+        recommendations = RecommendationFactory.create_batch(10)
+        for recommendation in recommendations:
+            recommendation.create()
+        category = recommendations[0].recommendation_type
+        count = len([recommendation for recommendation in recommendations if recommendation.recommendation_type == category])
+        found = Recommendation.find_by_category(category)
+        self.assertEqual(found.count(), count)
+        for recommendation in found:
+            self.assertEqual(recommendation.recommendation_type, category)

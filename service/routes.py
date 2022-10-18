@@ -66,3 +66,22 @@ def create_recommendation():
 
     app.logger.info("Recommendation with ID [%s] created.", recommendation.id)
     return jsonify(message), status.HTTP_201_CREATED
+
+
+######################################################################
+# LIST ALL Recommendations
+######################################################################
+@app.route("/recommendations/list", methods=["GET"])
+def list_recommendations():
+    """Returns all of the Recommendations"""
+    app.logger.info("Request for recommendations list")
+    recommendations = []
+    category = request.args.get("recommendation_type")
+    if category:
+        recommendations = Recommendation.find_by_category(category)
+    else:
+        recommendations = Recommendation.all()
+
+    results = [recommendation.serialize() for recommendation in recommendations]
+    app.logger.info("Returning %d recommendations", len(results))
+    return jsonify(results), status.HTTP_200_OK

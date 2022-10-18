@@ -12,6 +12,9 @@ logger = logging.getLogger("flask.app")
 # Create the SQLAlchemy object to be initialized later in init_db()
 db = SQLAlchemy()
 
+def init_db(app):
+    """Initialize the SQLAlchemy app"""
+    Recommendation.init_db(app)
 
 class DataValidationError(Exception):
     """ Used for an data validation errors when deserializing """
@@ -125,3 +128,14 @@ class Recommendation(db.Model):
         """ Finds a Recommendation by it's ID """
         logger.info("Processing lookup for id %s ...", by_id)
         return cls.query.get(by_id)
+
+    @classmethod
+    def find_by_category(cls, category: str) -> list:
+        """Returns all of the Recommendations in a category
+        :param category: the category of the Recommendations you want to match
+        :type category: str
+        :return: a collection of Recommendations in that category
+        :rtype: list
+        """
+        logger.info("Processing category query for %s ...", category)
+        return cls.query.filter(cls.recommendation_type == category)
