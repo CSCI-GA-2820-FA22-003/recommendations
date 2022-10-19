@@ -111,3 +111,21 @@ def update_pets(recommendation_id):
 
     app.logger.info("Recommendation with ID [%s] updated.", recommendation.id)
     return jsonify(recommendation.serialize()), status.HTTP_200_OK
+
+
+######################################################################
+# DELETE A RECOMMENDATION
+######################################################################
+@app.route("/recommendations/<int:recommendation_id>", methods=["DELETE"])
+def delete_recommendations(recommendation_id):
+    """
+    Delete a recommendation
+    This endpoint will delete a Recommendation based the id specified in the path
+    """
+    app.logger.info("Request to delete Recommendation with id: %s", recommendation_id)
+  recommendation = Recommendation.find(recommendation_id)
+    if recommendation:
+        recommendation.delete()
+
+    app.logger.info("Recommendation_id with ID [%s] delete complete.", recommendation_id)
+    return "", status.HTTP_204_NO_CONTENT
