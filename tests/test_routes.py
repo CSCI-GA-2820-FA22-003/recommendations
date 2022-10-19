@@ -103,7 +103,7 @@ class TestYourResourceServer(TestCase):
     def test_get_recommendations_list(self):
         """It should Get a list of recommendations"""
         self._create_recommendations(5)
-        response = self.app.get("/recommendations/list")
+        response = self.app.get(BASE_URL)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), 5)
@@ -114,7 +114,7 @@ class TestYourResourceServer(TestCase):
         test_category = recommendations[0].recommendation_type
         category_recommendations = [recommendation for recommendation in recommendations if recommendation.recommendation_type == test_category]
         response = self.app.get(
-            "/recommendations/list",
+            BASE_URL,
             query_string="recommendation_type="+test_category.name
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)

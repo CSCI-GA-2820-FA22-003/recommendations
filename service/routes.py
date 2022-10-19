@@ -71,7 +71,7 @@ def create_recommendation():
 ######################################################################
 # LIST ALL Recommendations
 ######################################################################
-@app.route("/recommendations/list", methods=["GET"])
+@app.route("/recommendations", methods=["GET"])
 def list_recommendations():
     """Returns all of the Recommendations"""
     app.logger.info("Request for recommendations list")
