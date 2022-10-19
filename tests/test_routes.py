@@ -148,7 +148,4 @@ class TestYourResourceServer(TestCase):
         response = self.client.delete(f"{BASE_URL}/{test_recommendation.id}")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(len(response.data), 0)
-        # make sure they are deleted
-#         response = self.client.get(f"{BASE_URL}/{test_pet.id}")
-#         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
