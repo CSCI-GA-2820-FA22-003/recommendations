@@ -85,3 +85,29 @@ def list_recommendations():
     results = [recommendation.serialize() for recommendation in recommendations]
     app.logger.info("Returning %d recommendations", len(results))
     return jsonify(results), status.HTTP_200_OK
+
+######################################################################
+# UPDATE AN EXISTING RECOMMENDATION
+######################################################################
+@app.route("/recommendations/<int:recommendation_id>", methods=["PUT"])
+def update_pets(recommendation_id):
+    """
+    Update a Recommendation
+
+    This endpoint will update a Recommendation based the body that is posted
+    """
+    app.logger.info("Request to update recommendation with id: %s", recommendation_id)
+    #check_content_type("application/json")
+
+    recommendation = Recommendation.find(recommendation_id)
+    print("ID Omar:", recommendation_id)
+    if not recommendation:
+        print("Inside IF")
+        abort(status.HTTP_404_NOT_FOUND, f"Recommendation with id '{recommendation_id}' was not found.")
+
+    recommendation.deserialize(request.get_json())
+    recommendation.id = recommendation_id
+    recommendation.update()
+
+    app.logger.info("Recommendation with ID [%s] updated.", recommendation.id)
+    return jsonify(recommendation.serialize()), status.HTTP_200_OK
