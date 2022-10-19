@@ -123,5 +123,23 @@ class TestYourResourceServer(TestCase):
         # check the data just to be sure
         for recommendation in data:
             self.assertEqual(recommendation["recommendation_type"], test_category.name)
+            
+    def test_update_recommendation(self):
+            """It should Update an existing recommendation"""
+            # create a recommendation to update
+            test_recommendation = RecommendationFactory()
+            response = self.app.post(BASE_URL, json=test_recommendation.serialize())
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            test_recommendation = response.get_json()
+
+            # update the recommendation
+            test_recommendation["liked"]= False
+            logging.debug(test_recommendation)
+            id = response.get_json()["id"]
+            response = self.app.put(f"{BASE_URL}/{id}", json=test_recommendation)
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            updated_recommendation = response.get_json()
+            self.assertEqual(updated_recommendation["liked"], False)
+
 
 
