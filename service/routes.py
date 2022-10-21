@@ -88,6 +88,18 @@ def create_recommendation():
 
 
 ######################################################################
+# READ A Recommendation
+######################################################################
+@app.route("/recommendations/<int:recommendation_id>", methods=["GET"])
+def list_recommendation(recommendation_id):
+    """Returns a Recommendation"""
+    app.logger.info("Request for recommendations id=%s", recommendation_id)
+    recommendation = Recommendation.find(recommendation_id)
+    result = recommendation.serialize()
+    return jsonify(result), status.HTTP_200_OK
+
+
+######################################################################
 # LIST ALL Recommendations
 ######################################################################
 @app.route("/recommendations", methods=["GET"])
