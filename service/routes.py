@@ -93,10 +93,11 @@ def create_recommendation():
 ######################################################################
 @app.route("/recommendations/<int:recommendation_id>", methods=["GET"])
 def list_recommendation(recommendation_id):
-    """Returns a Recommendation"""
-    app.logger.info("Request for recommendations id=%s", recommendation_id)
+    """Returns a Recommendation requested by it's ID"""
+    app.logger.info("Request for a recommendation id=%s", recommendation_id)
     recommendation = Recommendation.find(recommendation_id)
     result = recommendation.serialize()
+    app.logger.info("Recommendation with ID [%s] has been accessed", recommendation.id)
     return jsonify(result), status.HTTP_200_OK
 
 

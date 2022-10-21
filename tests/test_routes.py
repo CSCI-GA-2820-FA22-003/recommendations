@@ -110,9 +110,9 @@ class TestYourResourceServer(TestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), 5)
-        
+
     def test_read_recommendation(self):
-        """It should Get a recommendation"""
+        """It should read a recommendation queried by its ID"""
         recommendation = self._create_recommendations(1)[0]
         response = self.app.get(BASE_URL + f"/{recommendation.id}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
