@@ -170,6 +170,31 @@ class TestYourResourceServer(TestCase):
         """It should not Create a Recommendation with missing content type"""
         response = self.app.post(BASE_URL, json={})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        
+    def test_method_not_allowed(self):
+        """It should not invoke endpoints with incorrect HTTP methods"""
+
+        # Delete on Base URL
+        response = self.app.delete(BASE_URL)
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+        # Put on Base URL 
+        response = self.app.put(BASE_URL)
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def test_deserialize_missing_data(self):
+        """It should not deserialize a Recommendation with missing data"""
+        data = {"id":"1"}
+        recommendation = Recommendation()
+        self.assertRaises(DataValidationError, recommendation.deserialize, data)
+
+    def test_deserialize_bad_data(self):
+        """It should not deserialize bad data"""
+        data = "this is not a dictionary"
+        recommendation = Recommendation()
+        self.assertRaises(DataValidationError, recommendation.deserialize, data
+
+
 
     
 
