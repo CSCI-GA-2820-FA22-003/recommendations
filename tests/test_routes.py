@@ -192,7 +192,7 @@ class TestYourResourceServer(TestCase):
         """It should not deserialize bad data"""
         data = "this is not a dictionary"
         recommendation = Recommendation()
-        self.assertRaises(DataValidationError, recommendation.deserialize, data
+        self.assertRaises(DataValidationError, recommendation.deserialize, data)
 
 
 
