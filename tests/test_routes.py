@@ -10,12 +10,15 @@ import os
 import logging
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
+from urllib.request import Request
 from service import app
-from service.models import db, init_db, Recommendation
+from service.models import db, init_db, Recommendation, DataValidationError
 from service.common import status
+from service.routes import check_content_type
 from tests.factories import RecommendationFactory  # HTTP Status Codes
 from service import models
 from urllib.parse import quote_plus
+from unittest.mock import Mock
 
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/testdb"
@@ -145,7 +148,36 @@ class TestYourResourceServer(TestCase):
     def test_delete_recommendation(self):
         """It should Delete a Recommendation"""
         test_recommendation = self._create_recommendations(1)[0]
-        response = self.client.delete(f"{BASE_URL}/{test_recommendation.id}")
+        response = self.app.delete(f"{BASE_URL}/{test_recommendation.id}")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(len(response.data), 0)
+    
+######################################################################
+#  T E S T   S A D   P A T H S
+######################################################################
+
+    def test_update_recommendation_missing(self):
+        """It should not update a Recommendation that doesn't exist in the DB"""
+        response = self.app.put(f"{BASE_URL}/12345")
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_create_recommendation_no_content_type(self):
+        """It should not Create a Recommendation with no content type"""
+        response = self.app.post(BASE_URL)
+        self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+
+    def test_create_recommendation_missing_content(self):
+        """It should not Create a Recommendation with missing content type"""
+        response = self.app.post(BASE_URL, json={})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    
+
+
+    
+
+
+
+
+
 

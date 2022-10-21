@@ -47,6 +47,25 @@ def init_db():
     global app
     Recommendation.init_db(app)
 
+
+def check_content_type(content_type):
+    """Checks that the media type is correct"""
+    if "Content-Type" not in request.headers:
+        app.logger.error("No Content-Type specified.")
+        abort(
+            status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+            f"Content-Type must be {content_type}",
+        )
+
+    if request.headers["Content-Type"] == content_type:
+        return
+
+    app.logger.error("Invalid Content-Type: %s", request.headers["Content-Type"])
+    abort(
+        status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+        f"Content-Type must be {content_type}",
+    )
+
 ######################################################################
 # CREATE A RECOMMENDATION
 ######################################################################
@@ -57,7 +76,7 @@ def create_recommendation():
     This endpoint will create a Recommendation based the data in the body that is posted
     """
     app.logger.info("Request to create a recommendation")
-    #check_content_type("application/json")
+    check_content_type("application/json")
     recommendation = Recommendation()
     recommendation.deserialize(request.get_json())
     recommendation.create()
@@ -90,19 +109,16 @@ def list_recommendations():
 # UPDATE AN EXISTING RECOMMENDATION
 ######################################################################
 @app.route("/recommendations/<int:recommendation_id>", methods=["PUT"])
-def update_pets(recommendation_id):
+def update_recommendations(recommendation_id):
     """
     Update a Recommendation
 
     This endpoint will update a Recommendation based the body that is posted
     """
     app.logger.info("Request to update recommendation with id: %s", recommendation_id)
-    #check_content_type("application/json")
 
     recommendation = Recommendation.find(recommendation_id)
-    print("ID Omar:", recommendation_id)
     if not recommendation:
-        print("Inside IF")
         abort(status.HTTP_404_NOT_FOUND, f"Recommendation with id '{recommendation_id}' was not found.")
 
     recommendation.deserialize(request.get_json())
@@ -123,7 +139,7 @@ def delete_recommendations(recommendation_id):
     This endpoint will delete a Recommendation based the id specified in the path
     """
     app.logger.info("Request to delete Recommendation with id: %s", recommendation_id)
-  recommendation = Recommendation.find(recommendation_id)
+    recommendation = Recommendation.find(recommendation_id)
     if recommendation:
         recommendation.delete()
 
