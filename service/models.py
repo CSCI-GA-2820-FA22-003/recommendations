@@ -90,6 +90,12 @@ class Recommendation(db.Model):
             data (dict): A dictionary containing the resource data
         """
         try:
+            if not isinstance(data,dict):
+                raise DataValidationError(
+                "Invalid Recommendation: body of request contained bad or no data - "
+                "Error message: " + "data type is not a dictionary"
+            )
+
             self.product_1 = data["product_1"]
             self.product_2 = data["product_2"]
             self.recommendation_type = data["recommendation_type"]
@@ -100,11 +106,7 @@ class Recommendation(db.Model):
             raise DataValidationError(
                 "Invalid Recommendation: missing " + error.args[0]
             )
-        except TypeError as error:
-            raise DataValidationError(
-                "Invalid Recommendation: body of request contained bad or no data - "
-                "Error message: " + error
-            )
+
         return self
 
     @classmethod
