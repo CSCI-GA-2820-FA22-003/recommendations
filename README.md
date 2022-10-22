@@ -55,6 +55,130 @@ tests/              - test cases package
 └── test_routes.py  - test suite for service routes
 ```
 
+
+## Running and testing Instructions
+
+Run the server on cmd by using the command flask run and for tetsing use nosetests and postman.
+
+## Endpoints
+
+
+**GET /recommendations/healthcheck:**
+
+<i>Gives the health.</i>
+
+Response Body:<br/>
+
+{<br/>
+    "message": "Healthy",<br/>
+    "status": 200<br/>
+}
+
+<br/>
+<br/>
+
+**POST /recommendations :**
+
+<i>Creates a recommendation.</i>
+
+Request Body: <br/>
+{<br/>
+        "id": 0,<br/>
+        "liked": false,<br/>
+        "product_1": "aaaa",<br/>
+        "product_2": "bbbb",<br/>
+        "recommendation_type": "UP_SELL"<br/>
+}
+
+Response Body:<br/>
+{<br/>
+    "id": 872,<br/>
+    "liked": false,<br/>
+    "product_1": "aaaa",<br/>
+    "product_2": "bbbb",<br/>
+    "recommendation_type": "UP_SELL"<br/>
+}
+
+The created record is returned in the response.
+
+<br/>
+<br/>
+
+**GET /recommendations :**
+
+<i>Lists all the recommendation.</i>
+
+Response Body:<br/>
+
+[<br/>
+    {<br/>
+        "id": 841,<br/>
+        "liked": false,<br/>
+        "product_1": "a1",<br/>
+        "product_2": "d2",<br/>
+        "recommendation_type": "UP_SELL"<br/>
+    }<br/>
+]
+
+An array of all the recommendations is returned in the response.
+
+<br/>
+<br/>
+
+**PUT /recommendations/{recommendation_id} :**
+
+<i>Updates the recommendation with the recommendation_id.</i>
+
+Request Body: <br/>
+{<br/>
+        "id": 872,<br/>
+        "liked": true,<br/>
+        "product_1": "aaaa",<br/>
+        "product_2": "bbbb",<br/>
+        "recommendation_type": "CROSS_SELL"<br/>
+}
+
+Response Body:<br/>
+{<br/>
+    "id": 872,<br/>
+    "liked": true,<br/>
+    "product_1": "aaaa",<br/>
+    "product_2": "bbbb",<br/>
+    "recommendation_type": "CROSS_SELL"<br/>
+}
+
+The updated recommendation is returned in the response.
+
+<br/>
+<br/>
+
+**GET /recommendations/{recommendation_id} :**
+
+<i>Reads the recommendation with the recommendation_id.</i>
+
+Response Body ( GET http://localhost:8080/recommendations/872 ):<br/>
+{<br/>
+    "id": 872,<br/>
+    "liked": true,<br/>
+    "product_1": "aaaa",<br/>
+    "product_2": "bbbb",<br/>
+    "recommendation_type": "CROSS_SELL"<br/>
+}
+
+The recommendation with the id as recommendation_id is returned in the response.
+
+<br/>
+<br/>
+
+**DELETE /recommendations/{recommendation_id} :**
+
+<i>Deletes the recommendation with the recommendation_id.</i>
+
+Response Body ( DELETE http://localhost:8080/recommendations/872 ):<br/>
+204NO CONTENT
+
+204 NO CONTENT is returned if the recommendation is delted or not present.
+
 ## License
 
 Copyright (c) John Rofrano. All rights reserved.
