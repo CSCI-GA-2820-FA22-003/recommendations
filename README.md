@@ -68,10 +68,10 @@ Gives the health.
 
 Response Body:
 
-{
+`{
     "message": "Healthy",
     "status": 200
-}
+}`
 
 
 **POST /recommendations :**
@@ -79,22 +79,22 @@ Response Body:
 Creates a recommendation.
 
 Request Body: 
-{
+`{
         "id": 0,
         "liked": false,
         "product_1": "aaaa",
         "product_2": "bbbb",
         "recommendation_type": "UP_SELL"
-}
+}`
 
 Response Body:
-{
+`{
     "id": 872,
     "liked": false,
     "product_1": "aaaa",
     "product_2": "bbbb",
     "recommendation_type": "UP_SELL"
-}
+}`
 
 The created record is returned in the response.
 
@@ -104,7 +104,7 @@ Lists all the recommendation.
 
 Response Body:
 
-[
+`[
     {
         "id": 841,
         "liked": false,
@@ -112,7 +112,7 @@ Response Body:
         "product_2": "d2",
         "recommendation_type": "UP_SELL"
     }
-]
+]`
 
 An array of all the recommendations is returned in the response.
 
@@ -121,22 +121,22 @@ An array of all the recommendations is returned in the response.
 Updates the recommendation with the recommendation_id.
 
 Request Body: 
-{
+`{
         "id": 872,
         "liked": true,
         "product_1": "aaaa",
         "product_2": "bbbb",
         "recommendation_type": "CROSS_SELL"
-}
+}`
 
 Response Body:
-{
+`{
     "id": 872,
     "liked": true,
     "product_1": "aaaa",
     "product_2": "bbbb",
     "recommendation_type": "CROSS_SELL"
-}
+}`
 
 The updated recommendation is returned in the response.
 
@@ -144,14 +144,14 @@ The updated recommendation is returned in the response.
 
 Reads the recommendation with the recommendation_id.
 
-Response Body: ( GET http://localhost:8080/recommendations/872 )
-{
+Response Body ( GET http://localhost:8080/recommendations/872 ):
+`{
     "id": 872,
     "liked": true,
     "product_1": "aaaa",
     "product_2": "bbbb",
     "recommendation_type": "CROSS_SELL"
-}
+}`
 
 The recommendation with the id as recommendation_id is returned in the response.
 
@@ -159,7 +159,7 @@ The recommendation with the id as recommendation_id is returned in the response.
 
 Deletes the recommendation with the recommendation_id.
 
-Response Body: ( DELETE http://localhost:8080/recommendations/872 )
+Response Body ( DELETE http://localhost:8080/recommendations/872 ):
 204NO CONTENT
 
 204 NO CONTENT is returned if the recommendation is delted or not present.
