@@ -66,11 +66,11 @@ Run the server on cmd by using the command flask run and for tetsing use nosetes
 
 Gives the health.
 
-Response Body:
+Response Body:\
 
 `{
-    "message": "Healthy",
-    "status": 200
+    "message": "Healthy", \
+    "status": 200\
 }`
 
 
