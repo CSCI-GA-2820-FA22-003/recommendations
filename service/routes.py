@@ -4,12 +4,13 @@ My Service
 Describe what your service does here
 """
 
-from flask import Flask, jsonify, request, url_for, make_response, abort
+from flask import jsonify, request, abort
 from .common import status  # HTTP Status Codes
 from service.models import Recommendation
 
 # Import Flask application
 from . import app
+
 
 ######################################################################
 # GET HEALTH CHECK
@@ -31,7 +32,7 @@ def index():
         jsonify(
             name="Recommendations REST API Service",
             version="1.0",
-            #paths=url_for("list_recommendations", _external=True),
+            # paths=url_for("list_recommendations", _external=True),
         ),
         status.HTTP_200_OK,
     )
@@ -66,6 +67,7 @@ def check_content_type(content_type):
         f"Content-Type must be {content_type}",
     )
 
+
 ######################################################################
 # CREATE A RECOMMENDATION
 ######################################################################
@@ -81,8 +83,7 @@ def create_recommendation():
     recommendation.deserialize(request.get_json())
     recommendation.create()
     message = recommendation.serialize()
-    #location_url = url_for("get_pets", pet_id=pet.id, _external=True)
-
+    # location_url = url_for("get_pets", pet_id=pet.id, _external=True)
     app.logger.info("Recommendation with ID [%s] created.", recommendation.id)
     return jsonify(message), status.HTTP_201_CREATED
 
@@ -92,10 +93,11 @@ def create_recommendation():
 ######################################################################
 @app.route("/recommendations/<int:recommendation_id>", methods=["GET"])
 def list_recommendation(recommendation_id):
-    """Returns a Recommendation"""
-    app.logger.info("Request for recommendations id=%s", recommendation_id)
+    """Returns a Recommendation requested by it's ID"""
+    app.logger.info("Request for a recommendation id=%s", recommendation_id)
     recommendation = Recommendation.find(recommendation_id)
     result = recommendation.serialize()
+    app.logger.info("Recommendation with ID [%s] has been read", recommendation.id)
     return jsonify(result), status.HTTP_200_OK
 
 
@@ -116,6 +118,7 @@ def list_recommendations():
     results = [recommendation.serialize() for recommendation in recommendations]
     app.logger.info("Returning %d recommendations", len(results))
     return jsonify(results), status.HTTP_200_OK
+
 
 ######################################################################
 # UPDATE AN EXISTING RECOMMENDATION

@@ -12,9 +12,11 @@ logger = logging.getLogger("flask.app")
 # Create the SQLAlchemy object to be initialized later in init_db()
 db = SQLAlchemy()
 
+
 def init_db(app):
     """Initialize the SQLAlchemy app"""
     Recommendation.init_db(app)
+
 
 class DataValidationError(Exception):
     """ Used for an data validation errors when deserializing """
@@ -90,11 +92,11 @@ class Recommendation(db.Model):
             data (dict): A dictionary containing the resource data
         """
         try:
-            if not isinstance(data,dict):
+            if not isinstance(data, dict):
                 raise DataValidationError(
-                "Invalid Recommendation: body of request contained bad or no data - "
-                "Error message: " + "data type is not a dictionary"
-            )
+                    "Invalid Recommendation: body of request contained bad or no data - "
+                    "Error message: " + "data type is not a dictionary"
+                    )
 
             self.product_1 = data["product_1"]
             self.product_2 = data["product_2"]
