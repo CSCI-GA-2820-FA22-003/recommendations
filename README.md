@@ -62,6 +62,18 @@ Run the server on cmd by using the command flask run and for tetsing use nosetes
 
 ## Endpoints
 
+**GET /recommendations/healthcheck:**
+
+Gives the health.
+
+Response Body:
+
+{
+    "message": "Healthy",
+    "status": 200
+}
+
+
 **POST /recommendations :**
 
 Creates a recommendation.
@@ -84,6 +96,8 @@ Response Body:
     "recommendation_type": "UP_SELL"
 }
 
+The created record is returned in the response.
+
 **GET /recommendations :**
 
 Lists all the recommendation.
@@ -100,6 +114,7 @@ Response Body:
     }
 ]
 
+An array of all the recommendations is returned in the response.
 
 **PUT /recommendations/{recommendation_id} :**
 
@@ -123,33 +138,31 @@ Response Body:
     "recommendation_type": "CROSS_SELL"
 }
 
-
-**DELETE /recommendations/{recommendation_id} :**
-
-Deletes the recommendation with the recommendation_id.
-
-Request Body: 
-
-Response Body:
+The updated recommendation is returned in the response.
 
 **GET /recommendations/{recommendation_id} :**
 
 Reads the recommendation with the recommendation_id.
 
-Request Body: 
-
-Response Body:
-
-**GET /recommendations/healthcheck:**
-
-Gives the health.
-
-Response Body:
-
+Response Body: ( GET http://localhost:8080/recommendations/872 )
 {
-    "message": "Healthy",
-    "status": 200
+    "id": 872,
+    "liked": true,
+    "product_1": "aaaa",
+    "product_2": "bbbb",
+    "recommendation_type": "CROSS_SELL"
 }
+
+The recommendation with the id as recommendation_id is returned in the response.
+
+**DELETE /recommendations/{recommendation_id} :**
+
+Deletes the recommendation with the recommendation_id.
+
+Response Body: ( DELETE http://localhost:8080/recommendations/872 )
+204NO CONTENT
+
+204 NO CONTENT is returned if the recommendation is delted or not present.
 
 ## License
 
