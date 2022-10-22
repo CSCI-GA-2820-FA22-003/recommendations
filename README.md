@@ -55,6 +55,55 @@ tests/              - test cases package
 └── test_routes.py  - test suite for service routes
 ```
 
+
+## Running and testing Instructions
+
+Run the server on cmd by using the command flask run and for tetsing use nosetests and postman.
+
+## Endpoints
+
+**POST /recommendations :**
+
+Creates a recommendation.
+
+Request Body: 
+
+Response Body:
+
+**GET /recommendations :**
+
+Lists all the recommendation.
+
+Request Body: 
+
+Response Body:
+
+
+**PUT /recommendations/{recommendation_id} :**
+
+Updates the recommendation with the recommendation_id.
+
+Request Body: 
+
+Response Body:
+
+
+**DELETE /recommendations/{recommendation_id} :**
+
+Deletes the recommendation with the recommendation_id.
+
+Request Body: 
+
+Response Body:
+
+**GET /recommendations/{recommendation_id} :**
+
+Reads the recommendation with the recommendation_id.
+
+Request Body: 
+
+Response Body:
+
 ## License
 
 Copyright (c) John Rofrano. All rights reserved.
