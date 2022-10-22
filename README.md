@@ -67,16 +67,38 @@ Run the server on cmd by using the command flask run and for tetsing use nosetes
 Creates a recommendation.
 
 Request Body: 
+{
+        "id": 0,
+        "liked": false,
+        "product_1": "aaaa",
+        "product_2": "bbbb",
+        "recommendation_type": "UP_SELL"
+}
 
 Response Body:
+{
+    "id": 872,
+    "liked": false,
+    "product_1": "aaaa",
+    "product_2": "bbbb",
+    "recommendation_type": "UP_SELL"
+}
 
 **GET /recommendations :**
 
 Lists all the recommendation.
 
-Request Body: 
-
 Response Body:
+
+[
+    {
+        "id": 841,
+        "liked": false,
+        "product_1": "a1",
+        "product_2": "d2",
+        "recommendation_type": "UP_SELL"
+    }
+]
 
 
 **PUT /recommendations/{recommendation_id} :**
@@ -84,8 +106,22 @@ Response Body:
 Updates the recommendation with the recommendation_id.
 
 Request Body: 
+{
+        "id": 872,
+        "liked": true,
+        "product_1": "aaaa",
+        "product_2": "bbbb",
+        "recommendation_type": "CROSS_SELL"
+}
 
 Response Body:
+{
+    "id": 872,
+    "liked": true,
+    "product_1": "aaaa",
+    "product_2": "bbbb",
+    "recommendation_type": "CROSS_SELL"
+}
 
 
 **DELETE /recommendations/{recommendation_id} :**
@@ -103,6 +139,17 @@ Reads the recommendation with the recommendation_id.
 Request Body: 
 
 Response Body:
+
+**GET /recommendations/healthcheck:**
+
+Gives the health.
+
+Response Body:
+
+{
+    "message": "Healthy",
+    "status": 200
+}
 
 ## License
 
