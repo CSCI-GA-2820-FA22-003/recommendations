@@ -11,6 +11,7 @@ from service.models import Recommendation
 # Import Flask application
 from . import app
 
+BASE_URL = "/recommendations"
 
 ######################################################################
 # GET HEALTH CHECK
@@ -160,3 +161,26 @@ def delete_recommendations(recommendation_id):
 
     app.logger.info("Recommendation_id with ID [%s] delete complete.", recommendation_id)
     return "", status.HTTP_204_NO_CONTENT
+
+
+######################################################################
+# LIKE A RECOMMENDATION
+######################################################################
+@app.route("/recommendations/<int:recommendation_id>/like", methods=["PUT"])
+def like_recommendations(recommendation_id):
+    """
+    Like a Recommendation
+
+    This endpoint will liked a Recommendation given the recommendation ID
+    """
+    app.logger.info("Request to like recommendation with id: %s", recommendation_id)
+
+    recommendation = Recommendation.find(recommendation_id)
+    if not recommendation:
+        abort(status.HTTP_404_NOT_FOUND, f"Recommendation with id '{recommendation_id}' was not found.")
+
+    recommendation.liked = True
+    recommendation.update()
+
+    app.logger.info("Recommendation with ID [%s] liked.", recommendation.id)
+    return jsonify(recommendation.serialize()), status.HTTP_200_OK
