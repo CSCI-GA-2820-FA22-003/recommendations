@@ -4,7 +4,7 @@ My Service
 Describe what your service does here
 """
 
-from flask import jsonify, request, abort
+from flask import jsonify, request, abort, url_for
 from .common import status  # HTTP Status Codes
 from service.models import Recommendation
 
