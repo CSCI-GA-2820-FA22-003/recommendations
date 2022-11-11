@@ -143,3 +143,14 @@ class Recommendation(db.Model):
         """
         logger.info("Processing category query for %s ...", category)
         return cls.query.filter(cls.recommendation_type == category)
+
+    @classmethod
+    def find_by_product(cls, product: str) -> list:
+        """Returns all of the Recommendations for a product
+        :param category: the product for which you want to get the Recommendations
+        :type product: str
+        :return: a collection of products in that category
+        :rtype: list
+        """
+        logger.info("Processing product recommendations query for %s ...", product)
+        return cls.query.filter(cls.product_1 == product)
