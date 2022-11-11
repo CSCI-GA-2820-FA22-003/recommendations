@@ -84,9 +84,9 @@ def create_recommendation():
     recommendation.deserialize(request.get_json())
     recommendation.create()
     message = recommendation.serialize()
-    # location_url = url_for("get_pets", pet_id=pet.id, _external=True)
+    location_url = url_for("list_recommendations", recommendation_id=recommendation.id, _external=True)
     app.logger.info("Recommendation with ID [%s] created.", recommendation.id)
-    return jsonify(message), status.HTTP_201_CREATED
+    return jsonify(message), status.HTTP_201_CREATED,{"Location":location_url}
 
 
 ######################################################################
