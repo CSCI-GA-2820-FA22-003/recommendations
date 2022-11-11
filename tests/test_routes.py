@@ -150,6 +150,38 @@ class TestYourResourceServer(TestCase):
             updated_recommendation = response.get_json()
             self.assertEqual(updated_recommendation["liked"], False)
 
+    def test_like_recommendation(self):
+            """It should Like an existing recommendation"""
+            # create a recommendation to like
+            test_recommendation = RecommendationFactory()
+            response = self.app.post(BASE_URL, json=test_recommendation.serialize())
+            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+            test_recommendation = response.get_json()
+
+            # like the recommendation
+            logging.debug(test_recommendation)
+            id = response.get_json()["id"]
+            response = self.app.put(f"{BASE_URL}/{id}/like")
+            self.assertEqual(response.status_code, status.HTTP_200_OK)
+            liked_recommendation = response.get_json()
+            self.assertEqual(liked_recommendation["liked"], True)
+
+    def test_dislike_recommendation(self):
+        """It should Dislike an existing recommendation"""
+        # create a recommendation to dislike
+        test_recommendation = RecommendationFactory()
+        response = self.app.post(BASE_URL, json=test_recommendation.serialize())
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        test_recommendation = response.get_json()
+
+        # dislike the recommendation
+        logging.debug(test_recommendation)
+        id = response.get_json()["id"]
+        response = self.app.delete(f"{BASE_URL}/{id}/like")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        liked_recommendation = response.get_json()
+        self.assertEqual(liked_recommendation["liked"], False)
+
 
     def test_delete_recommendation(self):
         """It should Delete a Recommendation"""
