@@ -184,3 +184,26 @@ def like_recommendations(recommendation_id):
 
     app.logger.info("Recommendation with ID [%s] liked.", recommendation.id)
     return jsonify(recommendation.serialize()), status.HTTP_200_OK
+
+
+######################################################################
+# DISLIKE A RECOMMENDATION
+######################################################################
+@app.route("/recommendations/<int:recommendation_id>/like", methods=["DELETE"])
+def dislike_recommendations(recommendation_id):
+    """
+    Dislike a Recommendation
+
+    This endpoint will dislike a Recommendation given the recommendation ID
+    """
+    app.logger.info("Request to dislike recommendation with id: %s", recommendation_id)
+
+    recommendation = Recommendation.find(recommendation_id)
+    if not recommendation:
+        abort(status.HTTP_404_NOT_FOUND, f"Recommendation with id '{recommendation_id}' was not found.")
+
+    recommendation.liked = False
+    recommendation.update()
+
+    app.logger.info("Recommendation with ID [%s] disliked.", recommendation.id)
+    return jsonify(recommendation.serialize()), status.HTTP_200_OK
