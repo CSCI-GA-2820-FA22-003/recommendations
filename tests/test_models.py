@@ -154,3 +154,15 @@ class TestRecommendationModel(unittest.TestCase):
         self.assertEqual(found.count(), count)
         for recommendation in found:
             self.assertEqual(recommendation.recommendation_type, category)
+
+    def test_find_by_product(self):
+            """It should Find recommendations by product"""
+            recommendations = RecommendationFactory.create_batch(10)
+            for recommendation in recommendations:
+                recommendation.create()
+            product = recommendations[0].product_1
+            count = len([recommendation for recommendation in recommendations if (recommendation.product_1 == product or recommendation.product_2 == product)])
+            found = Recommendation.find_by_product(product)
+            self.assertEqual(found.count(), count)
+            for recommendation in found:
+                self.assertEqual(recommendation.product_1, product)
