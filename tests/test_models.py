@@ -166,3 +166,15 @@ class TestRecommendationModel(unittest.TestCase):
             self.assertEqual(found.count(), count)
             for recommendation in found:
                 self.assertEqual(recommendation.product_1, product)
+
+    def test_check_if_duplicate(self):
+            """It should check if a recommendation already exists with the given products"""
+            recommendations = RecommendationFactory.create_batch(5)
+            for recommendation in recommendations:
+                recommendation.create()
+            recommendation = recommendations[0]
+            product_1 = recommendation.product_1
+            product_2 = recommendation.product_2
+            recommendations = Recommendation.all()
+            self.assertEqual(len(recommendations), 5)
+            self.assertEqual(Recommendation.check_if_duplicate(product_1, product_2), True)
