@@ -132,6 +132,23 @@ class TestYourResourceServer(TestCase):
         # check the data just to be sure
         for recommendation in data:
             self.assertEqual(recommendation["recommendation_type"], test_category.name)
+
+    def test_query_recommendations_list_by_product(self):
+        """It should Query recommendations by Product"""
+        recommendations = self._create_recommendations(10)
+        product = recommendations[0].product_1
+        product_recommendations = [recommendation for recommendation in recommendations if recommendation.product_1 == product]
+
+        response = self.app.get(
+            BASE_URL,
+            query_string="product="+product
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), len(product_recommendations))
+        # check the data just to be sure
+        for recommendation in data:
+            self.assertEqual(recommendation["product_1"], product)
             
     def test_update_recommendation(self):
             """It should Update an existing recommendation"""

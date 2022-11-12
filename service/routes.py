@@ -111,15 +111,17 @@ def list_recommendations():
     app.logger.info("Request for recommendations list")
     recommendations = []
     category = request.args.get("recommendation_type")
+    product = request.args.get("product")
     if category:
         recommendations = Recommendation.find_by_category(category)
+    elif product:
+        recommendations = Recommendation.find_by_product(product)
     else:
         recommendations = Recommendation.all()
 
     results = [recommendation.serialize() for recommendation in recommendations]
     app.logger.info("Returning %d recommendations", len(results))
     return jsonify(results), status.HTTP_200_OK
-
 
 ######################################################################
 # UPDATE AN EXISTING RECOMMENDATION
