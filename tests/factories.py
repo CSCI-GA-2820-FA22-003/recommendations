@@ -17,7 +17,8 @@ class RecommendationFactory(factory.Factory):
         model = Recommendation
 
     id = factory.Sequence(lambda n: n)
-    product_1 = FuzzyChoice(choices=["a1", "b1", "c1", "d1"])
-    product_2 = FuzzyChoice(choices=["a2", "b2", "c2", "d2"])
+    #using sequence to generate unique recommendations each time
+    product_1 = factory.Sequence(lambda n: f"a_{n}")
+    product_2 = factory.Sequence(lambda n: f"b_{n}")
     recommendation_type = FuzzyChoice(choices=[RecommendationType.CROSS_SELL, 
         RecommendationType.UP_SELL, RecommendationType.ACCESSORY])

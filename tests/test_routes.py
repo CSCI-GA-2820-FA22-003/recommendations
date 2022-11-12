@@ -221,6 +221,12 @@ class TestYourResourceServer(TestCase):
         response = self.app.post(BASE_URL)
         self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
+    def test_create_recommendation_duplicate(self):
+        """It should not Create a Recommendation with no content type"""
+        test_recommendation = self._create_recommendations(1)[0]
+        response = self.app.post(BASE_URL, json=test_recommendation.serialize())
+        self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
+
     def test_create_recommendation_missing_content(self):
         """It should not Create a Recommendation with missing content type"""
         response = self.app.post(BASE_URL, json={})

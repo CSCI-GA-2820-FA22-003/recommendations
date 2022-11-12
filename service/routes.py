@@ -82,6 +82,12 @@ def create_recommendation():
     check_content_type("application/json")
     recommendation = Recommendation()
     recommendation.deserialize(request.get_json())
+    isDuplicate = Recommendation.check_if_duplicate(recommendation.product_1, recommendation.product_2)
+    if isDuplicate:
+        app.logger.info("Recommendation with products [%s] and [%s] already exists.", 
+                                    recommendation.product_1, recommendation.product_2)
+        abort(status.HTTP_406_NOT_ACCEPTABLE, f"Recommendation with products"+ 
+                        "'{recommendation.product_1}' and '{recommendation.product_1}'  already exists.")
     recommendation.create()
     message = recommendation.serialize()
     location_url = url_for("list_recommendations", recommendation_id=recommendation.id, _external=True)

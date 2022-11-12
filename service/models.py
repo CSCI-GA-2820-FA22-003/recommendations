@@ -154,3 +154,14 @@ class Recommendation(db.Model):
         """
         logger.info("Processing product recommendations query for %s ...", product)
         return cls.query.filter(cls.product_1 == product)
+
+    @classmethod
+    def check_if_duplicate(cls, product_1: str, product_2: str) -> list:
+        """Returns true if a recommendation already exists with the given products,
+            else returns false
+        :param product_1: the product_1 of the Recommendations
+        :param product_2: the product_2 of the Recommendations
+        :return: boolean
+        """
+        logger.info("Checking if a recommendation already exists for %s and %s ...", product_1, product_2)
+        return cls.query.filter(cls.product_1 == product_1).filter(cls.product_2 == product_2).count()>0
