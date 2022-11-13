@@ -1,7 +1,7 @@
 # These can be overidden with env vars.
 REGISTRY ?= us.icr.io
 NAMESPACE ?= omark8
-IMAGE_NAME ?= recommendationImage
+IMAGE_NAME ?= recommendations
 IMAGE_TAG ?= 1.0
 IMAGE ?= $(REGISTRY)/$(NAMESPACE)/$(IMAGE_NAME):$(IMAGE_TAG)
 # PLATFORM ?= "linux/amd64,linux/arm64"
@@ -42,3 +42,8 @@ login: ## Login to IBM Cloud using yur api key
 	ibmcloud cr login
 	ibmcloud ks cluster config --cluster $(CLUSTER)
 	kubectl cluster-info
+
+.PHONY: build
+build:	## Build all of the project Docker images
+	$(info Building $(IMAGE) for $(PLATFORM)...)
+	docker buildx build --file Dockerfile  --pull --platform=$(PLATFORM) --tag $(IMAGE) --load .
