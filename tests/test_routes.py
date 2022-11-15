@@ -255,6 +255,11 @@ class TestYourResourceServer(TestCase):
         recommendation = Recommendation()
         self.assertRaises(DataValidationError, recommendation.deserialize, data)
 
+    def test_recommendation_not_found(self):
+        """It should return 404 when the recommendation does not exist"""
+        response = self.app.get(f"{BASE_URL}/12345")
+        self.assertEqual(response.status_code,status.HTTP_404_NOT_FOUND)
+
 
 
     
