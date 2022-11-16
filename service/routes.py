@@ -49,7 +49,7 @@ def index():
 
 def init_db():
     """ Initializes the SQLAlchemy app """
-    global app
+    # global app
     Recommendation.init_db(app)
 
 
@@ -86,11 +86,12 @@ def create_recommendation():
     check_content_type("application/json")
     recommendation = Recommendation()
     recommendation.deserialize(request.get_json())
-    isDuplicate = Recommendation.check_if_duplicate(
+    is_duplicate = Recommendation.check_if_duplicate(
         recommendation.product_1, recommendation.product_2)
-    if isDuplicate:
+    if is_duplicate:
         app.logger.info(
-            "Recommendation with products [%s] and [%s] already exists.", recommendation.product_1, recommendation.product_2)
+            "Recommendation with products [%s] and [%s] already exists.",
+            recommendation.product_1, recommendation.product_2)
         abort(status.HTTP_406_NOT_ACCEPTABLE, "Recommendation with products" +
               "'{recommendation.product_1}' and '{recommendation.product_1}'  already exists.")
     recommendation.create()
@@ -114,8 +115,7 @@ def list_recommendation(recommendation_id):
         app.logger.info(
             "Recommendation with ID [%s] has been read", recommendation.id)
         return jsonify(result), status.HTTP_200_OK
-    else:
-        return "", status.HTTP_404_NOT_FOUND
+    return "", status.HTTP_404_NOT_FOUND
 
 
 ######################################################################

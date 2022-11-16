@@ -44,7 +44,8 @@ class Recommendation(db.Model):
     product_1 = db.Column(db.String(63), nullable=False)
     product_2 = db.Column(db.String(63), nullable=False)
     recommendation_type = db.Column(
-        db.Enum(RecommendationType), nullable=False, server_default=(RecommendationType.UNKNOWN.name)
+        db.Enum(RecommendationType), nullable=False,
+        server_default=(RecommendationType.UNKNOWN.name)
     )
     liked = db.Column(db.Boolean())
 
@@ -55,7 +56,8 @@ class Recommendation(db.Model):
         """
         Creates a Recommendation to the database
         """
-        logger.info("Creating Recommendation for %s and %s", self.product_1, self.product_2)
+        logger.info("Creating Recommendation for %s and %s",
+                    self.product_1, self.product_2)
         self.id = None  # id must be none to generate next primary key
         db.session.add(self)
         db.session.commit()
@@ -64,14 +66,16 @@ class Recommendation(db.Model):
         """
         Updates a Recommendation to the database
         """
-        logger.info("Saving Recommendation %s and %s", self.product_1, self.product_2)
+        logger.info("Saving Recommendation %s and %s",
+                    self.product_1, self.product_2)
         if not self.id:
             raise DataValidationError("Update called with empty ID field")
         db.session.commit()
 
     def delete(self):
         """ Removes a Recommendation from the data store """
-        logger.info("Deleting Recommendation %s and %s", self.product_1, self.product_2)
+        logger.info("Deleting Recommendation %s and %s",
+                    self.product_1, self.product_2)
         db.session.delete(self)
         db.session.commit()
 
@@ -97,7 +101,7 @@ class Recommendation(db.Model):
                 raise DataValidationError(
                     "Invalid Recommendation: body of request contained bad or no data - "
                     "Error message: " + "data type is not a dictionary"
-                    )
+                )
 
             self.product_1 = data["product_1"]
             self.product_2 = data["product_2"]
@@ -153,7 +157,8 @@ class Recommendation(db.Model):
         :return: a collection of products in that category
         :rtype: list
         """
-        logger.info("Processing product recommendations query for %s ...", product)
+        logger.info(
+            "Processing product recommendations query for %s ...", product)
         return cls.query.filter(cls.product_1 == product)
 
     @classmethod
@@ -164,5 +169,8 @@ class Recommendation(db.Model):
         :param product_2: the product_2 of the Recommendations
         :return: boolean
         """
-        logger.info("Checking if a recommendation already exists for %s and %s ...", product_1, product_2)
-        return cls.query.filter(cls.product_1 == product_1).filter(cls.product_2 == product_2).count() > 0
+        logger.info(
+            "Checking if a recommendation already exists for %s and %s ...", product_1, product_2)
+        return (cls.query
+                .filter(cls.product_1 == product_1)
+                .filter(cls.product_2 == product_2).count() > 0)

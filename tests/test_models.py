@@ -9,7 +9,6 @@ Test cases can be run with:
 import os
 import logging
 import unittest
-from werkzeug.exceptions import NotFound
 from service import app
 # from tests.factories import PetFactory
 from service.models import Recommendation, RecommendationType, DataValidationError, db
@@ -23,6 +22,8 @@ DATABASE_URI = os.getenv(
 #  R E C O M M E N D A T I O N   M O D E L   T E S T   C A S E S
 ######################################################################
 # pylint: disable=too-many-public-methods
+
+
 class TestRecommendationModel(unittest.TestCase):
     """ Test Cases for Recommendation Model """
 
@@ -55,23 +56,31 @@ class TestRecommendationModel(unittest.TestCase):
 
     def test_create_a_recommendation(self):
         """It should Create a test_create_a_recommendation and assert that it exists"""
-        recommendation = Recommendation(product_1="aa", product_2="bb",recommendation_type=RecommendationType.CROSS_SELL)
-        self.assertEqual(str(recommendation), "<Recommendation aa and bb id=[None]>")
+        recommendation = Recommendation(
+            product_1="aa", product_2="bb", recommendation_type=RecommendationType.CROSS_SELL)
+        self.assertEqual(str(recommendation),
+                         "<Recommendation aa and bb id=[None]>")
         self.assertTrue(recommendation is not None)
         self.assertEqual(recommendation.product_1, "aa")
         self.assertEqual(recommendation.product_2, "bb")
-        self.assertEqual(recommendation.recommendation_type, RecommendationType.CROSS_SELL)
+        self.assertEqual(recommendation.recommendation_type,
+                         RecommendationType.CROSS_SELL)
         self.assertEqual(recommendation.liked, None)
-        recommendation = Recommendation(product_1="aa", product_2="bb",recommendation_type=RecommendationType.UP_SELL)
-        self.assertEqual(recommendation.recommendation_type, RecommendationType.UP_SELL)
-        recommendation = Recommendation(product_1="aa", product_2="bb",recommendation_type=RecommendationType.ACCESSORY)
-        self.assertEqual(recommendation.recommendation_type, RecommendationType.ACCESSORY)
+        recommendation = Recommendation(
+            product_1="aa", product_2="bb", recommendation_type=RecommendationType.UP_SELL)
+        self.assertEqual(recommendation.recommendation_type,
+                         RecommendationType.UP_SELL)
+        recommendation = Recommendation(
+            product_1="aa", product_2="bb", recommendation_type=RecommendationType.ACCESSORY)
+        self.assertEqual(recommendation.recommendation_type,
+                         RecommendationType.ACCESSORY)
 
     def test_add_a_recommendation(self):
         """It should Create a recommendation and add it to the database"""
         recommendations = Recommendation.all()
         self.assertEqual(recommendations, [])
-        recommendation = Recommendation(product_1="aa", product_2="bb",recommendation_type=RecommendationType.CROSS_SELL)
+        recommendation = Recommendation(
+            product_1="aa", product_2="bb", recommendation_type=RecommendationType.CROSS_SELL)
         self.assertTrue(recommendation is not None)
         self.assertEqual(recommendation.id, None)
         recommendation.create()
@@ -92,8 +101,9 @@ class TestRecommendationModel(unittest.TestCase):
         self.assertEqual(found_rec.id, recommendation.id)
         self.assertEqual(found_rec.product_1, recommendation.product_1)
         self.assertEqual(found_rec.product_2, recommendation.product_2)
-        self.assertEqual(found_rec.recommendation_type, recommendation.recommendation_type)
-    
+        self.assertEqual(found_rec.recommendation_type,
+                         recommendation.recommendation_type)
+
     def test_update_a_recommendation(self):
         """It should Update a recommendation"""
         recommendation = RecommendationFactory()
@@ -149,32 +159,36 @@ class TestRecommendationModel(unittest.TestCase):
         for recommendation in recommendations:
             recommendation.create()
         category = recommendations[0].recommendation_type
-        count = len([recommendation for recommendation in recommendations if recommendation.recommendation_type == category])
+        count = len(
+            [recommendation for recommendation in recommendations
+            if recommendation.recommendation_type == category])
         found = Recommendation.find_by_category(category)
         self.assertEqual(found.count(), count)
         for recommendation in found:
             self.assertEqual(recommendation.recommendation_type, category)
 
     def test_find_by_product(self):
-            """It should Find recommendations by product"""
-            recommendations = RecommendationFactory.create_batch(10)
-            for recommendation in recommendations:
-                recommendation.create()
-            product = recommendations[0].product_1
-            count = len([recommendation for recommendation in recommendations if (recommendation.product_1 == product or recommendation.product_2 == product)])
-            found = Recommendation.find_by_product(product)
-            self.assertEqual(found.count(), count)
-            for recommendation in found:
-                self.assertEqual(recommendation.product_1, product)
+        """It should Find recommendations by product"""
+        recommendations = RecommendationFactory.create_batch(10)
+        for recommendation in recommendations:
+            recommendation.create()
+        product = recommendations[0].product_1
+        count = len([recommendation for recommendation in recommendations if (
+            product in (recommendation.product_1, recommendation.product_2))])
+        found = Recommendation.find_by_product(product)
+        self.assertEqual(found.count(), count)
+        for recommendation in found:
+            self.assertEqual(recommendation.product_1, product)
 
     def test_check_if_duplicate(self):
-            """It should check if a recommendation already exists with the given products"""
-            recommendations = RecommendationFactory.create_batch(5)
-            for recommendation in recommendations:
-                recommendation.create()
-            recommendation = recommendations[0]
-            product_1 = recommendation.product_1
-            product_2 = recommendation.product_2
-            recommendations = Recommendation.all()
-            self.assertEqual(len(recommendations), 5)
-            self.assertEqual(Recommendation.check_if_duplicate(product_1, product_2), True)
+        """It should check if a recommendation already exists with the given products"""
+        recommendations = RecommendationFactory.create_batch(5)
+        for recommendation in recommendations:
+            recommendation.create()
+        recommendation = recommendations[0]
+        product_1 = recommendation.product_1
+        product_2 = recommendation.product_2
+        recommendations = Recommendation.all()
+        self.assertEqual(len(recommendations), 5)
+        self.assertEqual(Recommendation.check_if_duplicate(
+            product_1, product_2), True)

@@ -6,19 +6,14 @@ Test cases can be run with the following:
   nosetests -v --with-spec --spec-color
   coverage report -m
 """
-import os
 import logging
+import os
 from unittest import TestCase
-from unittest.mock import MagicMock, patch
-from urllib.request import Request
+
 from service import app
-from service.models import db, init_db, Recommendation, DataValidationError
 from service.common import status
-from service.routes import check_content_type
+from service.models import DataValidationError, Recommendation, db, init_db
 from tests.factories import RecommendationFactory  # HTTP Status Codes
-from service import models
-from urllib.parse import quote_plus
-from unittest.mock import Mock
 
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/testdb"
@@ -28,6 +23,8 @@ BASE_URL = "/recommendations"
 ######################################################################
 #  T E S T   C A S E S
 ######################################################################
+
+
 class TestYourResourceServer(TestCase):
     """ REST API Server Tests """
 
@@ -61,9 +58,12 @@ class TestYourResourceServer(TestCase):
         recommendations = []
         for _ in range(count):
             test_recommendation = RecommendationFactory()
-            response = self.app.post(BASE_URL, json=test_recommendation.serialize())
+            response = self.app.post(
+                BASE_URL, json=test_recommendation.serialize())
             self.assertEqual(
-                response.status_code, status.HTTP_201_CREATED, "Could not create test recommendation"
+                response.status_code,
+                status.HTTP_201_CREATED,
+                "Could not create test recommendation"
             )
             new_recommendation = response.get_json()
             test_recommendation.id = new_recommendation["id"]
@@ -84,16 +84,21 @@ class TestYourResourceServer(TestCase):
         """It should Create a new Recommendation"""
         self.client = app.test_client()
         test_recommendation = RecommendationFactory()
-        logging.debug("Test Recommendation: %s", test_recommendation.serialize())
-        response = self.client.post("/recommendations", json=test_recommendation.serialize())
+        logging.debug("Test Recommendation: %s",
+                      test_recommendation.serialize())
+        response = self.client.post(
+            "/recommendations", json=test_recommendation.serialize())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         # Check the data is correct
         new_recommendation = response.get_json()
         #self.assertEqual(new_recommendation["id"], test_recommendation.id)
-        self.assertEqual(new_recommendation["product_1"], test_recommendation.product_1)
-        self.assertEqual(new_recommendation["product_2"], test_recommendation.product_2)
-        #self.assertEqual(new_recommendation["recommendation_type"], test_recommendation.recommendation_type)
+        self.assertEqual(
+            new_recommendation["product_1"],
+            test_recommendation.product_1)
+        self.assertEqual(
+            new_recommendation["product_2"],
+            test_recommendation.product_2)
 
     def test_health(self):
         """It should be healthy"""
@@ -116,12 +121,14 @@ class TestYourResourceServer(TestCase):
         recommendation = self._create_recommendations(1)[0]
         response = self.app.get(BASE_URL + f"/{recommendation.id}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-    
+
     def test_query_recommendations_list_by_category(self):
         """It should Query recommendations by Category"""
         recommendations = self._create_recommendations(10)
         test_category = recommendations[0].recommendation_type
-        category_recommendations = [recommendation for recommendation in recommendations if recommendation.recommendation_type == test_category]
+        category_recommendations = [
+            recommendation for recommendation in recommendations
+            if recommendation.recommendation_type == test_category]
         response = self.app.get(
             BASE_URL,
             query_string="recommendation_type="+test_category.name
@@ -131,13 +138,16 @@ class TestYourResourceServer(TestCase):
         self.assertEqual(len(data), len(category_recommendations))
         # check the data just to be sure
         for recommendation in data:
-            self.assertEqual(recommendation["recommendation_type"], test_category.name)
+            self.assertEqual(
+                recommendation["recommendation_type"], test_category.name)
 
     def test_query_recommendations_list_by_product(self):
         """It should Query recommendations by Product"""
         recommendations = self._create_recommendations(10)
         product = recommendations[0].product_1
-        product_recommendations = [recommendation for recommendation in recommendations if recommendation.product_1 == product]
+        product_recommendations = [
+            recommendation for recommendation in recommendations
+            if recommendation.product_1 == product]
 
         response = self.app.get(
             BASE_URL,
@@ -149,56 +159,55 @@ class TestYourResourceServer(TestCase):
         # check the data just to be sure
         for recommendation in data:
             self.assertEqual(recommendation["product_1"], product)
-            
-    def test_update_recommendation(self):
-            """It should Update an existing recommendation"""
-            # create a recommendation to update
-            test_recommendation = RecommendationFactory()
-            response = self.app.post(BASE_URL, json=test_recommendation.serialize())
-            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-            test_recommendation = response.get_json()
 
-            # update the recommendation
-            test_recommendation["liked"]= False
-            logging.debug(test_recommendation)
-            id = response.get_json()["id"]
-            response = self.app.put(f"{BASE_URL}/{id}", json=test_recommendation)
-            self.assertEqual(response.status_code, status.HTTP_200_OK)
-            updated_recommendation = response.get_json()
-            self.assertEqual(updated_recommendation["liked"], False)
+    def test_update_recommendation(self):
+        """It should Update an existing recommendation"""
+        # create a recommendation to update
+        test_recommendation = RecommendationFactory()
+        response = self.app.post(
+            BASE_URL, json=test_recommendation.serialize())
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        test_recommendation = response.get_json()
+
+        # update the recommendation
+        test_recommendation["liked"] = False
+        logging.debug(test_recommendation)
+        response = self.app.put(f"{BASE_URL}/{response.get_json()['id']}", json=test_recommendation)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        updated_recommendation = response.get_json()
+        self.assertEqual(updated_recommendation["liked"], False)
 
     def test_like_recommendation(self):
-            """It should Like an existing recommendation"""
-            # create a recommendation to like
-            test_recommendation = RecommendationFactory()
-            response = self.app.post(BASE_URL, json=test_recommendation.serialize())
-            self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-            test_recommendation = response.get_json()
+        """It should Like an existing recommendation"""
+        # create a recommendation to like
+        test_recommendation = RecommendationFactory()
+        response = self.app.post(
+            BASE_URL, json=test_recommendation.serialize())
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        test_recommendation = response.get_json()
 
-            # like the recommendation
-            logging.debug(test_recommendation)
-            id = response.get_json()["id"]
-            response = self.app.put(f"{BASE_URL}/{id}/like")
-            self.assertEqual(response.status_code, status.HTTP_200_OK)
-            liked_recommendation = response.get_json()
-            self.assertEqual(liked_recommendation["liked"], True)
+        # like the recommendation
+        logging.debug(test_recommendation)
+        response = self.app.put(f"{BASE_URL}/{response.get_json()['id']}/like")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        liked_recommendation = response.get_json()
+        self.assertEqual(liked_recommendation["liked"], True)
 
     def test_dislike_recommendation(self):
         """It should Dislike an existing recommendation"""
         # create a recommendation to dislike
         test_recommendation = RecommendationFactory()
-        response = self.app.post(BASE_URL, json=test_recommendation.serialize())
+        response = self.app.post(
+            BASE_URL, json=test_recommendation.serialize())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         test_recommendation = response.get_json()
 
         # dislike the recommendation
         logging.debug(test_recommendation)
-        id = response.get_json()["id"]
-        response = self.app.delete(f"{BASE_URL}/{id}/like")
+        response = self.app.delete(f"{BASE_URL}/{response.get_json()['id']}/like")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         liked_recommendation = response.get_json()
         self.assertEqual(liked_recommendation["liked"], False)
-
 
     def test_delete_recommendation(self):
         """It should Delete a Recommendation"""
@@ -206,7 +215,7 @@ class TestYourResourceServer(TestCase):
         response = self.app.delete(f"{BASE_URL}/{test_recommendation.id}")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(len(response.data), 0)
-    
+
 ######################################################################
 #  T E S T   S A D   P A T H S
 ######################################################################
@@ -219,56 +228,49 @@ class TestYourResourceServer(TestCase):
     def test_create_recommendation_no_content_type(self):
         """It should not Create a Recommendation with no content type"""
         response = self.app.post(BASE_URL)
-        self.assertEqual(response.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+        self.assertEqual(response.status_code,
+                         status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
 
     def test_create_recommendation_duplicate(self):
         """It should not Create a Recommendation with no content type"""
         test_recommendation = self._create_recommendations(1)[0]
-        response = self.app.post(BASE_URL, json=test_recommendation.serialize())
+        response = self.app.post(
+            BASE_URL, json=test_recommendation.serialize())
         self.assertEqual(response.status_code, status.HTTP_406_NOT_ACCEPTABLE)
 
     def test_create_recommendation_missing_content(self):
         """It should not Create a Recommendation with missing content type"""
         response = self.app.post(BASE_URL, json={})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        
+
     def test_method_not_allowed(self):
         """It should not invoke endpoints with incorrect HTTP methods"""
 
         # Delete on Base URL
         response = self.app.delete(BASE_URL)
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assertEqual(response.status_code,
+                         status.HTTP_405_METHOD_NOT_ALLOWED)
 
-        # Put on Base URL 
+        # Put on Base URL
         response = self.app.put(BASE_URL)
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assertEqual(response.status_code,
+                         status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def test_deserialize_missing_data(self):
         """It should not deserialize a Recommendation with missing data"""
-        data = {"id":"1"}
+        data = {"id": "1"}
         recommendation = Recommendation()
-        self.assertRaises(DataValidationError, recommendation.deserialize, data)
+        self.assertRaises(DataValidationError,
+                          recommendation.deserialize, data)
 
     def test_deserialize_bad_data(self):
         """It should not deserialize bad data"""
         data = "this is not a dictionary"
         recommendation = Recommendation()
-        self.assertRaises(DataValidationError, recommendation.deserialize, data)
+        self.assertRaises(DataValidationError,
+                          recommendation.deserialize, data)
 
     def test_recommendation_not_found(self):
         """It should return 404 when the recommendation does not exist"""
         response = self.app.get(f"{BASE_URL}/12345")
-        self.assertEqual(response.status_code,status.HTTP_404_NOT_FOUND)
-
-
-
-    
-
-
-    
-
-
-
-
-
-
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)

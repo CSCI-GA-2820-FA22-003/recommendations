@@ -1,10 +1,9 @@
 """
 Test Factory to make fake objects for testing
 """
-from datetime import date
 
 import factory
-from factory.fuzzy import FuzzyChoice, FuzzyDate
+from factory.fuzzy import FuzzyChoice
 from service.models import Recommendation, RecommendationType
 
 
@@ -17,8 +16,8 @@ class RecommendationFactory(factory.Factory):
         model = Recommendation
 
     id = factory.Sequence(lambda n: n)
-    #using sequence to generate unique recommendations each time
+    # using sequence to generate unique recommendations each time
     product_1 = factory.Sequence(lambda n: f"a_{n}")
     product_2 = factory.Sequence(lambda n: f"b_{n}")
-    recommendation_type = FuzzyChoice(choices=[RecommendationType.CROSS_SELL, 
-        RecommendationType.UP_SELL, RecommendationType.ACCESSORY])
+    recommendation_type = FuzzyChoice(choices=[RecommendationType.CROSS_SELL,
+                                        RecommendationType.UP_SELL, RecommendationType.ACCESSORY])
