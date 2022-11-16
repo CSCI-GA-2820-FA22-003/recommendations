@@ -4,8 +4,9 @@ Models for YourResourceModel
 All of the models are stored in this module
 """
 import logging
-from flask_sqlalchemy import SQLAlchemy
 from enum import Enum
+
+from flask_sqlalchemy import SQLAlchemy
 
 logger = logging.getLogger("flask.app")
 
@@ -164,4 +165,4 @@ class Recommendation(db.Model):
         :return: boolean
         """
         logger.info("Checking if a recommendation already exists for %s and %s ...", product_1, product_2)
-        return cls.query.filter(cls.product_1 == product_1).filter(cls.product_2 == product_2).count()>0
+        return cls.query.filter(cls.product_1 == product_1).filter(cls.product_2 == product_2).count() > 0
