@@ -4,18 +4,21 @@ My Service
 Describe what your service does here
 """
 
-from flask import jsonify, request, abort, url_for
-from .common import status  # HTTP Status Codes
+from flask import abort, jsonify, request, url_for
+
 from service.models import Recommendation
 
 # Import Flask application
 from . import app
+from .common import status  # HTTP Status Codes
 
 BASE_URL = "/recommendations"
 
 ######################################################################
 # GET HEALTH CHECK
 ######################################################################
+
+
 @app.route("/healthcheck")
 def healthcheck():
     """Let them know our heart is still beating"""
@@ -62,7 +65,8 @@ def check_content_type(content_type):
     if request.headers["Content-Type"] == content_type:
         return
 
-    app.logger.error("Invalid Content-Type: %s", request.headers["Content-Type"])
+    app.logger.error("Invalid Content-Type: %s",
+                     request.headers["Content-Type"])
     abort(
         status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
         f"Content-Type must be {content_type}",
@@ -82,17 +86,19 @@ def create_recommendation():
     check_content_type("application/json")
     recommendation = Recommendation()
     recommendation.deserialize(request.get_json())
-    isDuplicate = Recommendation.check_if_duplicate(recommendation.product_1, recommendation.product_2)
+    isDuplicate = Recommendation.check_if_duplicate(
+        recommendation.product_1, recommendation.product_2)
     if isDuplicate:
-        app.logger.info("Recommendation with products [%s] and [%s] already exists.", 
-                                    recommendation.product_1, recommendation.product_2)
-        abort(status.HTTP_406_NOT_ACCEPTABLE, f"Recommendation with products"+ 
-                        "'{recommendation.product_1}' and '{recommendation.product_1}'  already exists.")
+        app.logger.info(
+            "Recommendation with products [%s] and [%s] already exists.", recommendation.product_1, recommendation.product_2)
+        abort(status.HTTP_406_NOT_ACCEPTABLE, "Recommendation with products" +
+              "'{recommendation.product_1}' and '{recommendation.product_1}'  already exists.")
     recommendation.create()
     message = recommendation.serialize()
-    location_url = url_for("list_recommendations", recommendation_id=recommendation.id, _external=True)
+    location_url = url_for("list_recommendations",
+                           recommendation_id=recommendation.id, _external=True)
     app.logger.info("Recommendation with ID [%s] created.", recommendation.id)
-    return jsonify(message), status.HTTP_201_CREATED,{"Location":location_url}
+    return jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
 
 
 ######################################################################
@@ -105,11 +111,11 @@ def list_recommendation(recommendation_id):
     recommendation = Recommendation.find(recommendation_id)
     if recommendation is not None:
         result = recommendation.serialize()
-        app.logger.info("Recommendation with ID [%s] has been read", recommendation.id)
+        app.logger.info(
+            "Recommendation with ID [%s] has been read", recommendation.id)
         return jsonify(result), status.HTTP_200_OK
     else:
-        return "",status.HTTP_404_NOT_FOUND
-    
+        return "", status.HTTP_404_NOT_FOUND
 
 
 ######################################################################
@@ -129,13 +135,16 @@ def list_recommendations():
     else:
         recommendations = Recommendation.all()
 
-    results = [recommendation.serialize() for recommendation in recommendations]
+    results = [recommendation.serialize()
+               for recommendation in recommendations]
     app.logger.info("Returning %d recommendations", len(results))
     return jsonify(results), status.HTTP_200_OK
 
 ######################################################################
 # UPDATE AN EXISTING RECOMMENDATION
 ######################################################################
+
+
 @app.route("/recommendations/<int:recommendation_id>", methods=["PUT"])
 def update_recommendations(recommendation_id):
     """
@@ -143,11 +152,13 @@ def update_recommendations(recommendation_id):
 
     This endpoint will update a Recommendation based the body that is posted
     """
-    app.logger.info("Request to update recommendation with id: %s", recommendation_id)
+    app.logger.info(
+        "Request to update recommendation with id: %s", recommendation_id)
 
     recommendation = Recommendation.find(recommendation_id)
     if not recommendation:
-        abort(status.HTTP_404_NOT_FOUND, f"Recommendation with id '{recommendation_id}' was not found.")
+        abort(status.HTTP_404_NOT_FOUND,
+              f"Recommendation with id '{recommendation_id}' was not found.")
 
     recommendation.deserialize(request.get_json())
     recommendation.id = recommendation_id
@@ -166,12 +177,14 @@ def delete_recommendations(recommendation_id):
     Delete a recommendation
     This endpoint will delete a Recommendation based the id specified in the path
     """
-    app.logger.info("Request to delete Recommendation with id: %s", recommendation_id)
+    app.logger.info(
+        "Request to delete Recommendation with id: %s", recommendation_id)
     recommendation = Recommendation.find(recommendation_id)
     if recommendation:
         recommendation.delete()
 
-    app.logger.info("Recommendation_id with ID [%s] delete complete.", recommendation_id)
+    app.logger.info(
+        "Recommendation_id with ID [%s] delete complete.", recommendation_id)
     return "", status.HTTP_204_NO_CONTENT
 
 
@@ -185,11 +198,13 @@ def like_recommendations(recommendation_id):
 
     This endpoint will liked a Recommendation given the recommendation ID
     """
-    app.logger.info("Request to like recommendation with id: %s", recommendation_id)
+    app.logger.info(
+        "Request to like recommendation with id: %s", recommendation_id)
 
     recommendation = Recommendation.find(recommendation_id)
     if not recommendation:
-        abort(status.HTTP_404_NOT_FOUND, f"Recommendation with id '{recommendation_id}' was not found.")
+        abort(status.HTTP_404_NOT_FOUND,
+              f"Recommendation with id '{recommendation_id}' was not found.")
 
     recommendation.liked = True
     recommendation.update()
@@ -208,11 +223,13 @@ def dislike_recommendations(recommendation_id):
 
     This endpoint will dislike a Recommendation given the recommendation ID
     """
-    app.logger.info("Request to dislike recommendation with id: %s", recommendation_id)
+    app.logger.info(
+        "Request to dislike recommendation with id: %s", recommendation_id)
 
     recommendation = Recommendation.find(recommendation_id)
     if not recommendation:
-        abort(status.HTTP_404_NOT_FOUND, f"Recommendation with id '{recommendation_id}' was not found.")
+        abort(status.HTTP_404_NOT_FOUND,
+              f"Recommendation with id '{recommendation_id}' was not found.")
 
     recommendation.liked = False
     recommendation.update()
