@@ -159,9 +159,9 @@ class TestRecommendationModel(unittest.TestCase):
         for recommendation in recommendations:
             recommendation.create()
         category = recommendations[0].recommendation_type
-        count = len(
-            [recommendation for recommendation in recommendations
-            if recommendation.recommendation_type == category])
+        count = len([recommendation
+                     for recommendation in recommendations
+                     if recommendation.recommendation_type == category])
         found = Recommendation.find_by_category(category)
         self.assertEqual(found.count(), count)
         for recommendation in found:

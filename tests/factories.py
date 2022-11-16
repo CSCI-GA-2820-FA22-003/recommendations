@@ -20,4 +20,4 @@ class RecommendationFactory(factory.Factory):
     product_1 = factory.Sequence(lambda n: f"a_{n}")
     product_2 = factory.Sequence(lambda n: f"b_{n}")
     recommendation_type = FuzzyChoice(choices=[RecommendationType.CROSS_SELL,
-                                        RecommendationType.UP_SELL, RecommendationType.ACCESSORY])
+                                      RecommendationType.UP_SELL, RecommendationType.ACCESSORY])

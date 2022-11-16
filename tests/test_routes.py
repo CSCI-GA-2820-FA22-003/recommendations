@@ -92,7 +92,7 @@ class TestYourResourceServer(TestCase):
 
         # Check the data is correct
         new_recommendation = response.get_json()
-        #self.assertEqual(new_recommendation["id"], test_recommendation.id)
+        # self.assertEqual(new_recommendation["id"], test_recommendation.id)
         self.assertEqual(
             new_recommendation["product_1"],
             test_recommendation.product_1)
