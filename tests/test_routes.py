@@ -151,7 +151,7 @@ class TestYourResourceServer(TestCase):
 
         response = self.app.get(
             BASE_URL,
-            query_string="product="+product
+            query_string="product_1="+product
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
