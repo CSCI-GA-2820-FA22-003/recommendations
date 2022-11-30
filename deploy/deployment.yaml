@@ -25,7 +25,7 @@ spec:
       containers:
       - name: recommendations
         image: us.icr.io/omark8/recommendations:1.0
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         ports:
         - containerPort: 8080
           protocol: TCP
