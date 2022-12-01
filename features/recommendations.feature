@@ -37,6 +37,24 @@ Scenario: Create a Recommendation
     And I should see "False" in the "liked" dropdown
     And I should see "Cross Sell" in the "recommendation_type" dropdown
 
+Scenario: Read a Recommendation
+    When I visit the "Home Page"
+    And I set the "product_1" to "test 1"
+    And I set the "product_2" to "test 2"
+    And I press the "Create" button
+    Then I should see the message "Success"
+    When I copy the "id" field
+    And I press the "Clear" button
+    Then the "id" field should be empty
+    And the "product_1" field should be empty
+    And the "product_2" field should be empty
+    When I paste the "id" field
+    And I press the "Retrieve" button
+    Then I should see the message "Success"
+    And I should see "test 1" in the "product_1" field
+    And I should see "test 2" in the "product_2" field
+    And I should see "True" in the "liked" dropdown
+    And I should see "Unknown" in the "recommendation_type" dropdown
 
 Scenario: Update a Recommendation
     When I visit the "Home Page"
