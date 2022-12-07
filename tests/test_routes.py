@@ -141,8 +141,8 @@ class TestYourResourceServer(TestCase):
             self.assertEqual(
                 recommendation["recommendation_type"], test_category.name)
 
-    def test_query_recommendations_list_by_product(self):
-        """It should Query recommendations by Product"""
+    def test_query_recommendations_list_by_product_1(self):
+        """It should Query recommendations by Product 1"""
         recommendations = self._create_recommendations(10)
         product = recommendations[0].product_1
         product_recommendations = [
@@ -151,7 +151,7 @@ class TestYourResourceServer(TestCase):
 
         response = self.app.get(
             BASE_URL,
-            query_string="product="+product
+            query_string="product_1="+product
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
@@ -159,6 +159,25 @@ class TestYourResourceServer(TestCase):
         # check the data just to be sure
         for recommendation in data:
             self.assertEqual(recommendation["product_1"], product)
+
+    def test_query_recommendations_list_by_product_2(self):
+        """It should Query recommendations by Product 2"""
+        recommendations = self._create_recommendations(10)
+        product = recommendations[0].product_2
+        product_recommendations = [
+            recommendation for recommendation in recommendations
+            if recommendation.product_2 == product]
+
+        response = self.app.get(
+            BASE_URL,
+            query_string="product_2="+product
+        )
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        data = response.get_json()
+        self.assertEqual(len(data), len(product_recommendations))
+        # check the data just to be sure
+        for recommendation in data:
+            self.assertEqual(recommendation["product_2"], product)
 
     def test_update_recommendation(self):
         """It should Update an existing recommendation"""

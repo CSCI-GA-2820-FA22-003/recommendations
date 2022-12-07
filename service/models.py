@@ -162,6 +162,30 @@ class Recommendation(db.Model):
         return cls.query.filter(cls.product_1 == product)
 
     @classmethod
+    def find_by_product_1(cls, product: str) -> list:
+        """Returns all of the Recommendations for a product
+        :param category: the product for which you want to get the Recommendations
+        :type product: str
+        :return: a collection of products in that category
+        :rtype: list
+        """
+        logger.info(
+            "Processing product recommendations query for %s ...", product)
+        return cls.query.filter(cls.product_1 == product)
+
+    @classmethod
+    def find_by_product_2(cls, product: str) -> list:
+        """Returns all of the Recommendations for a product
+        :param category: the product for which you want to get the Recommendations
+        :type product: str
+        :return: a collection of products in that category
+        :rtype: list
+        """
+        logger.info(
+            "Processing product recommendations query for %s ...", product)
+        return cls.query.filter(cls.product_2 == product)
+
+    @classmethod
     def check_if_duplicate(cls, product_1: str, product_2: str) -> list:
         """Returns true if a recommendation already exists with the given products,
             else returns false

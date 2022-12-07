@@ -30,16 +30,18 @@ def healthcheck():
 ######################################################################
 @app.route("/")
 def index():
-    """ Root URL response """
-    app.logger.info("Request for Root URL")
-    return (
-        jsonify(
-            name="Recommendations REST API Service",
-            version="1.0",
-            # paths=url_for("list_recommendations", _external=True),
-        ),
-        status.HTTP_200_OK,
-    )
+    # """ Root URL response """
+    # app.logger.info("Request for Root URL")
+    # return (
+    #     jsonify(
+    #         name="Recommendations REST API Service",
+    #         version="1.0",
+    #         # paths=url_for("list_recommendations", _external=True),
+    #     ),
+    #     status.HTTP_200_OK,
+    # )
+    """Base URL for our service"""
+    return app.send_static_file("index.html")
 
 
 ######################################################################
@@ -127,11 +129,14 @@ def list_recommendations():
     app.logger.info("Request for recommendations list")
     recommendations = []
     category = request.args.get("recommendation_type")
-    product = request.args.get("product")
+    product_1 = request.args.get("product_1")
+    product_2 = request.args.get("product_2")
     if category:
         recommendations = Recommendation.find_by_category(category)
-    elif product:
-        recommendations = Recommendation.find_by_product(product)
+    elif product_1:
+        recommendations = Recommendation.find_by_product_1(product_1)
+    elif product_2:
+        recommendations = Recommendation.find_by_product_2(product_2)
     else:
         recommendations = Recommendation.all()
 
