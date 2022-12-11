@@ -177,6 +177,61 @@ $(function () {
         clear_form_data()
     });
 
+
+    // ****************************************
+    // Like a Recommendation
+    // ****************************************
+
+    $("#like-btn").click(function () {
+
+        let id = $("#id").val();
+
+        $("#flash_message").empty();
+
+        let ajax = $.ajax({
+            type: "PUT",
+            url: `/recommendations/${id}/like`,
+            contentType: "application/json",
+            data: '',
+        })
+
+        ajax.done(function(res){
+            clear_form_data()
+            flash_message("Recommendation liked!")
+        });
+
+        ajax.fail(function(res){
+            flash_message("Server error!")
+        });
+    })
+
+    // ****************************************
+    // Dislike a Recommendation
+    // ****************************************
+
+    $("#dislike-btn").click(function () {
+
+        let id = $("#id").val();
+
+        $("#flash_message").empty();
+
+        let ajax = $.ajax({
+            type: "DELETE",
+            url: `/recommendations/${id}/like`,
+            contentType: "application/json",
+            data: '',
+        })
+
+        ajax.done(function(res){
+            clear_form_data()
+            flash_message("Recommendation disliked!")
+        });
+
+        ajax.fail(function(res){
+            flash_message("Server error!")
+        });
+    })
+
     // ****************************************
     // Search for a Recommendation
     // ****************************************
