@@ -89,8 +89,8 @@ Scenario: Update a Recommendation
     
 Scenario: Delete a Recommendation
     When I visit the "Home Page"
-    And I set the "product_1" to "test 1"
-    And I set the "product_2" to "test 2"
+    And I set the "product_1" to "product one"
+    And I set the "product_2" to "product two"
     And I select "False" in the "liked" dropdown
     And I select "Cross Sell" in the "recommendation_type" dropdown
     And I press the "Create" button
@@ -112,8 +112,8 @@ Scenario: Delete a Recommendation
 
 Scenario: Like a Recommendation
     When I visit the "Home Page"
-    And I set the "product_1" to "test 1"
-    And I set the "product_2" to "test 2"
+    And I set the "product_1" to "product one"
+    And I set the "product_2" to "product two"
     And I select "False" in the "liked" dropdown
     And I select "Cross Sell" in the "recommendation_type" dropdown
     And I press the "Create" button
@@ -128,15 +128,15 @@ Scenario: Like a Recommendation
     Then I should see the message "Recommendation liked!"
     When I paste the "id" field
     And I press the "Retrieve" button
-    Then I should see "test 1" in the "product_1" field
-    And I should see "test 2" in the "product_2" field
+    Then I should see "product one" in the "product_1" field
+    And I should see "product two" in the "product_2" field
     And I should see "True" in the "liked" dropdown
 
 
 Scenario: Dislike a Recommendation
     When I visit the "Home Page"
-    And I set the "product_1" to "test 1"
-    And I set the "product_2" to "test 2"
+    And I set the "product_1" to "p1"
+    And I set the "product_2" to "p2"
     And I select "False" in the "liked" dropdown
     And I select "Cross Sell" in the "recommendation_type" dropdown
     And I press the "Create" button
@@ -151,6 +151,6 @@ Scenario: Dislike a Recommendation
     Then I should see the message "Recommendation disliked!"
     When I paste the "id" field
     And I press the "Retrieve" button
-    Then I should see "test 1" in the "product_1" field
-    And I should see "test 2" in the "product_2" field
+    Then I should see "p1" in the "product_1" field
+    And I should see "p2" in the "product_2" field
     And I should see "False" in the "liked" dropdown
