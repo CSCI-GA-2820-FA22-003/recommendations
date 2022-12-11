@@ -85,3 +85,26 @@ Scenario: Update a Recommendation
     And I should see "test 2" in the "product_2" field
     And I should see "False" in the "liked" dropdown
     And I should see "Up Sell" in the "recommendation_type" dropdown
+    
+    
+Scenario: Delete a Recommendation
+    When I visit the "Home Page"
+    And I set the "product_1" to "test 1"
+    And I set the "product_2" to "test 2"
+    And I select "False" in the "liked" dropdown
+    And I select "Cross Sell" in the "recommendation_type" dropdown
+    And I press the "Create" button
+    Then I should see the message "Success"
+    When I copy the "id" field
+    And I press the "Clear" button
+    Then the "id" field should be empty
+    And the "product_1" field should be empty
+    And the "product_2" field should be empty
+    When I paste the "id" field
+    And I press the "Delete" button
+    Then I should see the message "Recommendation has been Deleted!"
+    When I paste the "id" field
+    And I press the "Retrieve" button
+    Then the "id" field should be empty
+    And the "product_1" field should be empty
+    And the "product_2" field should be empty
