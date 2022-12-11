@@ -105,7 +105,8 @@ Scenario: Delete a Recommendation
     Then I should see the message "Recommendation has been Deleted!"
     When I paste the "id" field
     And I press the "Retrieve" button
-    Then the "id" field should be empty
+    Then I should see the message "Not Found!"
+    And the "id" field should be empty
     And the "product_1" field should be empty
     And the "product_2" field should be empty
 
