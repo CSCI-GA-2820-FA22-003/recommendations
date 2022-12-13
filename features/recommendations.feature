@@ -190,4 +190,68 @@ Scenario: Search by Category
     And the "product_2" field should be empty
 
 
+Scenario: Search by Product 1
+    When I visit the "Home Page"
+    And I set the "product_1" to "phone"
+    And I set the "product_2" to "laptop"
+    And I select "True" in the "liked" dropdown
+    And I select "Cross Sell" in the "recommendation_type" dropdown
+    And I press the "Create" button
+    Then I should see the message "Success"
+    When I press the "Clear" button
+    Then the "id" field should be empty
+    And the "product_1" field should be empty
+    And the "product_2" field should be empty
+    When I set the "product_1" to "phone"
+    And I press the "Search" button    
+    Then I should see the message "Success"
+    Then I should see "phone" in the "product_1" field
+    And I should see "charger" in the "product_2" field
+    When I press the "Delete" button
+    Then I should see the message "Recommendation has been Deleted!"
+    When I set the "product_1" to "phone"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    Then I should see "phone" in the "product_1" field
+    And I should see "laptop" in the "product_2" field
+    When I press the "Delete" button
+    Then I should see the message "Recommendation has been Deleted!"
+    When I set the "product_1" to "phone"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    Then the "id" field should be empty
+    And the "product_2" field should be empty
 
+
+
+Scenario: Search by Product 2
+    When I visit the "Home Page"
+    And I set the "product_1" to "laptop"
+    And I set the "product_2" to "charger"
+    And I select "True" in the "liked" dropdown
+    And I select "Cross Sell" in the "recommendation_type" dropdown
+    And I press the "Create" button
+    Then I should see the message "Success"
+    When I press the "Clear" button
+    Then the "id" field should be empty
+    And the "product_1" field should be empty
+    And the "product_2" field should be empty
+    When I set the "product_2" to "charger"
+    And I press the "Search" button    
+    Then I should see the message "Success"
+    Then I should see "phone" in the "product_1" field
+    And I should see "charger" in the "product_2" field
+    When I press the "Delete" button
+    Then I should see the message "Recommendation has been Deleted!"
+    When I set the "product_2" to "charger"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    Then I should see "laptop" in the "product_1" field
+    And I should see "charger" in the "product_2" field
+    When I press the "Delete" button
+    Then I should see the message "Recommendation has been Deleted!"
+    When I set the "product_2" to "charger"
+    And I press the "Search" button
+    Then I should see the message "Success"
+    Then the "id" field should be empty
+    And the "product_1" field should be empty
