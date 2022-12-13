@@ -37,6 +37,15 @@ Scenario: Create a Recommendation
     And I should see "False" in the "liked" dropdown
     And I should see "Cross Sell" in the "recommendation_type" dropdown
 
+Scenario: List all recommendations
+    When I visit the "Home Page"
+    And I press the "Clear" button
+    And I press the "Search" button
+    Then I should see the message "Success"
+    And I should see "phone" in the results
+    And I should see "brush" in the results
+    And I should not see "apple" in the results
+
 Scenario: Read a Recommendation
     When I visit the "Home Page"
     And I set the "product_1" to "test 1"
