@@ -155,3 +155,39 @@ Scenario: Dislike a Recommendation
     Then I should see "p1" in the "product_1" field
     And I should see "p2" in the "product_2" field
     And I should see "False" in the "liked" dropdown
+
+
+Scenario: Search by Category
+    When I visit the "Home Page"
+    And I set the "product_1" to "tomato"
+    And I set the "product_2" to "potato"
+    And I select "False" in the "liked" dropdown
+    And I select "Cross Sell" in the "recommendation_type" dropdown
+    And I press the "Create" button
+    Then I should see the message "Success"
+    When I press the "Clear" button
+    Then the "id" field should be empty
+    And the "product_1" field should be empty
+    And the "product_2" field should be empty
+    When I select "Cross Sell" in the "recommendation_type" dropdown
+    And I press the "Search" button
+    Then I should see "onion" in the "product_1" field
+    And I should see "tomato" in the "product_2" field
+    And I should see "True" in the "liked" dropdown
+    When I press the "Delete" button
+    Then I should see the message "Recommendation has been Deleted!"
+    When I select "Cross Sell" in the "recommendation_type" dropdown
+    And I press the "Search" button
+    Then I should see "tomato" in the "product_1" field
+    And I should see "potato" in the "product_2" field
+    And I should see "False" in the "liked" dropdown
+    When I press the "Delete" button
+    Then I should see the message "Recommendation has been Deleted!"
+    When I select "Cross Sell" in the "recommendation_type" dropdown
+    And I press the "Search" button
+    Then the "id" field should be empty
+    And the "product_1" field should be empty
+    And the "product_2" field should be empty
+
+
+
