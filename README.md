@@ -10,25 +10,21 @@ This is a skeleton you can use to start your projects
 
 ## Overview
 
-This project template contains starter code for your class project. The `/service` folder contains your `models.py` file for your model and a `routes.py` file for your service. The `/tests` folder has test case starter code for testing the model and the service separately. All you need to do is add your functionality. You can use the [lab-flask-tdd](https://github.com/nyu-devops/lab-flask-tdd) for code examples to copy from.
+This project is a REST API service for recommendations. Each recommendation consists of product 1, product 2, type of recommendation, liked/disliked status.
 
-## Automatic Setup
+## Setup
 
-The best way to use this repo is to start your own repo using it as a git template. To do this just press the green **Use this template** button in GitHub and this will become the source for your repository.
+Use ``` git clone https://github.com/CSCI-GA-2820-FA22-003/recommendations.git``` to clone the repository in your local machine.
 
-## Manual Setup
+Start the docker desktop, open the code in VSCode and click ```Reopen in Container```.
 
-You can also clone this repository and then copy and paste the starter code into your project repo folder on your local computer. Be careful not to copy over your own `README.md` file so be selective in what you copy.
+And then, ``` honcho start ``` to start the flask server.
 
-There are 4 hidden files that you will need to copy manually if you use the Mac Finder or Windows Explorer to copy files from this folder into your repo folder.
+## Endpoints
 
-These should be copied using a bash shell as follows:
+Devlopment Enviroment: http://169.51.206.124:31001/
 
-```bash
-    cp .gitignore  ../<your_repo_folder>/
-    cp .flaskenv ../<your_repo_folder>/
-    cp .gitattributes ../<your_repo_folder>/
-```
+Production Enviroment: http://169.51.206.124:31002/
 
 ## Contents
 
