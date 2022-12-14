@@ -4,8 +4,8 @@ My Service
 Describe what your service does here
 """
 
-from flask import jsonify, request, url_for, make_response
-from flask_restx import Api, Resource, fields, reqparse, inputs
+from flask import jsonify, request, url_for
+from flask_restx import fields, reqparse
 
 from service.models import Recommendation
 
@@ -47,7 +47,7 @@ create_model = api.model('Recommendation', {
     'Product #1': fields.String(required=True, description='The name of Product 1'),
     'Product #2': fields.String(required=True, description='The name of Product 2'),
     'Liked': fields.Boolean(required=False, description='Does the customer dislike the recommendation?'),
-    'Type': fields.String(required=True, description='The type of the Recommendation'),  
+    'Type': fields.String(required=True, description='The type of the Recommendation'),
     })
 
 recommendation_model = api.inherit(
@@ -55,24 +55,24 @@ recommendation_model = api.inherit(
     create_model,
     {
         'Recommendation ID': fields.String(readOnly=True,
-                             description='The unique id assigned internally by service'),
+                                           description='The unique id assigned internally by service'),
     }
 )
 
 # query string arguments
 recommendation_args = reqparse.RequestParser()
-recommendation_args.add_argument('name', type=int, location='args', required=False, help='List Recommendation by Recommendation ID')
-
+recommendation_args.add_argument('name', type=int, location='args',
+                                 required=False, help='List Recommendation by Recommendation ID')
 
 
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
-
 def abort(error_code: int, message: str):
     """Logs errors before aborting"""
     app.logger.error(message)
     api.abort(error_code, message)
+
 
 def init_db():
     """ Initializes the SQLAlchemy app """
@@ -103,7 +103,7 @@ def check_content_type(content_type):
 ######################################################################
 # CREATE A RECOMMENDATION
 ######################################################################
-@app.route("/api/recommendations", methods=["POST"])
+@app.route("/recommendations", methods=["POST"])
 def create_recommendation():
     """
     Creates a Recommendation
@@ -112,6 +112,10 @@ def create_recommendation():
     app.logger.info("Request to create a recommendation")
     check_content_type("application/json")
     recommendation = Recommendation()
+
+    # if not recommendation.check_primary_key_valid(request.get_json()):
+    #        abort(status.HTTP_409_CONFLICT, "Primary key missing/invalid")
+    # recommendation.deserialize(request.get_json())
     recommendation.deserialize(request.get_json())
     is_duplicate = Recommendation.check_if_duplicate(
         recommendation.product_1, recommendation.product_2)
@@ -132,7 +136,7 @@ def create_recommendation():
 ######################################################################
 # READ A Recommendation
 ######################################################################
-@app.route("/api/recommendations/<int:recommendation_id>", methods=["GET"])
+@app.route("/recommendations/<int:recommendation_id>", methods=["GET"])
 def list_recommendation(recommendation_id):
     """Returns a Recommendation requested by it's ID"""
     app.logger.info("Request for a recommendation id=%s", recommendation_id)
@@ -148,7 +152,7 @@ def list_recommendation(recommendation_id):
 ######################################################################
 # LIST ALL Recommendations
 ######################################################################
-@app.route("/api/recommendations", methods=["GET"])
+@app.route("/recommendations", methods=["GET"])
 def list_recommendations():
     """Returns all of the Recommendations"""
     app.logger.info("Request for recommendations list")
@@ -175,7 +179,7 @@ def list_recommendations():
 ######################################################################
 
 
-@app.route("/api/recommendations/<int:recommendation_id>", methods=["PUT"])
+@app.route("/recommendations/<int:recommendation_id>", methods=["PUT"])
 def update_recommendations(recommendation_id):
     """
     Update a Recommendation
@@ -201,7 +205,7 @@ def update_recommendations(recommendation_id):
 ######################################################################
 # DELETE A RECOMMENDATION
 ######################################################################
-@app.route("/api/recommendations/<int:recommendation_id>", methods=["DELETE"])
+@app.route("/recommendations/<int:recommendation_id>", methods=["DELETE"])
 def delete_recommendations(recommendation_id):
     """
     Delete a recommendation
@@ -221,7 +225,7 @@ def delete_recommendations(recommendation_id):
 ######################################################################
 # LIKE A RECOMMENDATION
 ######################################################################
-@app.route("/api/recommendations/<int:recommendation_id>/like", methods=["PUT"])
+@app.route("/recommendations/<int:recommendation_id>/like", methods=["PUT"])
 def like_recommendations(recommendation_id):
     """
     Like a Recommendation
@@ -246,7 +250,7 @@ def like_recommendations(recommendation_id):
 ######################################################################
 # DISLIKE A RECOMMENDATION
 ######################################################################
-@app.route("/api/recommendations/<int:recommendation_id>/like", methods=["DELETE"])
+@app.route("/recommendations/<int:recommendation_id>/like", methods=["DELETE"])
 def dislike_recommendations(recommendation_id):
     """
     Dislike a Recommendation

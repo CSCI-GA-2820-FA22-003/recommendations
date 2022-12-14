@@ -28,7 +28,7 @@ from . import status
 ######################################################################
 @api.errorhandler(DataValidationError)
 def request_validation_error(error):
-    
+
     message = str(error)
     app.logger.error(message)
     return {
@@ -36,6 +36,7 @@ def request_validation_error(error):
         'error': 'Bad Request',
         'message': message
     }, status.HTTP_400_BAD_REQUEST
+
 
 @api.errorhandler(DatabaseConnectionError)
 def database_connection_error(error):
