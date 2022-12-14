@@ -49,7 +49,7 @@ create_model = api.model('Recommendation', {
     'liked': fields.Boolean(required=False,
                             description='Does the customer dislike the recommendation?'),
     'recommendation_type': fields.String(required=True,
-                            description='The type of the Recommendation'),
+                                         description='The type of the Recommendation'),
     })
 
 recommendation_model = api.inherit(
