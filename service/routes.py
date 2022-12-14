@@ -46,8 +46,10 @@ create_model = api.model('Recommendation', {
     'id': fields.Integer(required=True, description='The ID of the Recommendation'),
     'product_1': fields.String(required=True, description='The name of Product 1'),
     'product_2': fields.String(required=True, description='The name of Product 2'),
-    'liked': fields.Boolean(required=False, description='Does the customer dislike the recommendation?'),
-    'recommendation_type': fields.String(required=True, description='The type of the Recommendation'),
+    'liked': fields.Boolean(required=False,
+                            description='Does the customer dislike the recommendation?'),
+    'recommendation_type': fields.String(required=True,
+                            description='The type of the Recommendation'),
     })
 
 recommendation_model = api.inherit(
@@ -61,11 +63,14 @@ recommendation_model = api.inherit(
 
 # query string arguments
 recommendation_args = reqparse.RequestParser()
-recommendation_args.add_argument('product_1', type=str, location='args', required=False, help='List Recs by product 1')
-recommendation_args.add_argument('product_2', type=str, location='args', required=False, help='List Recs by product 2')
+recommendation_args.add_argument('product_1', type=str, location='args', required=False,
+                                 help='List Recs by product 1')
+recommendation_args.add_argument('product_2', type=str, location='args', required=False,
+                                 help='List Recs by product 2')
 recommendation_args.add_argument('recommendation_type', type=str, location='args', required=False,
-                                help='List Recs by category')
-recommendation_args.add_argument('liked', type=inputs.boolean, location='args', required=False, help='List Recs by liked')
+                                 help='List Recs by category')
+recommendation_args.add_argument('liked', type=inputs.boolean, location='args', required=False,
+                                 help='List Recs by liked')
 
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
