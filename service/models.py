@@ -18,9 +18,11 @@ def init_db(app):
     """Initialize the SQLAlchemy app"""
     Recommendation.init_db(app)
 
+class DatabaseConnectionError(Exception):
+    """ Used for data connection errors """
 
 class DataValidationError(Exception):
-    """ Used for an data validation errors when deserializing """
+    """ Used for data validation errors when deserializing """
 
 
 class RecommendationType(Enum):
