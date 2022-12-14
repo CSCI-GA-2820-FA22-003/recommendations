@@ -63,12 +63,14 @@ recommendation_model = api.inherit(
 recommendation_args = reqparse.RequestParser()
 recommendation_args.add_argument('product_1', type=str, location='args', required=False, help='List Recs by product 1')
 recommendation_args.add_argument('product_2', type=str, location='args', required=False, help='List Recs by product 2')
-recommendation_args.add_argument('recommendation_type', type=str, location='args', required=False, help='List Recs by category')
+recommendation_args.add_argument('recommendation_type', type=str, location='args', required=False,
+                                                        help='List Recs by category')
 recommendation_args.add_argument('liked', type=inputs.boolean, location='args', required=False, help='List Recs by liked')
 
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
+
 def abort(error_code: int, message: str):
     """Logs errors before aborting"""
     app.logger.error(message)
