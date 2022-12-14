@@ -15,21 +15,28 @@
 ######################################################################
 
 """
-Module: error_handlers
+Module:Error handlers
+Handles all of the HTTP Error Codes returning JSON messages
 """
-from flask import jsonify
-from service.models import DataValidationError
-from service import app
+from service.models import DataValidationError, DatabaseConnectionError
+from service import app, api
 from . import status
-
+from flask import jsonify
 
 ######################################################################
-# Error Handlers
+# Special Error Handlers
 ######################################################################
-@app.errorhandler(DataValidationError)
+
+
+@api.errorhandler(DataValidationError)
 def request_validation_error(error):
-    """Handles Value Errors from bad data"""
-    return bad_request(error)
+    message = str(error)
+    app.logger.error(message)
+    return {
+        'status_code': status.HTTP_400_BAD_REQUEST,
+        'error': 'Bad Request',
+        'message': message
+    }, status.HTTP_400_BAD_REQUEST
 
 
 @app.errorhandler(status.HTTP_400_BAD_REQUEST)
@@ -101,16 +108,13 @@ def mediatype_not_supported(error):
     )
 
 
-@app.errorhandler(status.HTTP_500_INTERNAL_SERVER_ERROR)
-def internal_server_error(error):
-    """Handles unexpected server error with 500_SERVER_ERROR"""
+@api.errorhandler(DatabaseConnectionError)
+def database_connection_error(error):
+    """ Handles Database Errors from connection attempts """
     message = str(error)
-    app.logger.error(message)
-    return (
-        jsonify(
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            error="Internal Server Error",
-            message=message,
-        ),
-        status.HTTP_500_INTERNAL_SERVER_ERROR,
-    )
+    app.logger.critical(message)
+    return {
+        'status_code': status.HTTP_503_SERVICE_UNAVAILABLE,
+        'error': 'Service Unavailable',
+        'message': message
+    }, status.HTTP_503_SERVICE_UNAVAILABLE

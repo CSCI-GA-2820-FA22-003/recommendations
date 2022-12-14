@@ -8,6 +8,7 @@ from enum import Enum
 
 from flask_sqlalchemy import SQLAlchemy
 
+
 logger = logging.getLogger("flask.app")
 
 # Create the SQLAlchemy object to be initialized later in init_db()
@@ -19,8 +20,12 @@ def init_db(app):
     Recommendation.init_db(app)
 
 
+class DatabaseConnectionError(Exception):
+    """ Used for data connection errors """
+
+
 class DataValidationError(Exception):
-    """ Used for an data validation errors when deserializing """
+    """ Used for data validation errors when deserializing """
 
 
 class RecommendationType(Enum):

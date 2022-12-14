@@ -4,12 +4,13 @@ My Service
 Describe what your service does here
 """
 
-from flask import abort, jsonify, request, url_for
+from flask import jsonify, request, url_for
+from flask_restx import fields, reqparse
 
 from service.models import Recommendation
 
 # Import Flask application
-from . import app
+from . import app, api
 from .common import status  # HTTP Status Codes
 
 BASE_URL = "/recommendations"
@@ -28,25 +29,49 @@ def healthcheck():
 ######################################################################
 # GET INDEX
 ######################################################################
+
 @app.route("/")
 def index():
-    # """ Root URL response """
-    # app.logger.info("Request for Root URL")
-    # return (
-    #     jsonify(
-    #         name="Recommendations REST API Service",
-    #         version="1.0",
-    #         # paths=url_for("list_recommendations", _external=True),
-    #     ),
-    #     status.HTTP_200_OK,
-    # )
     """Base URL for our service"""
+    app.logger.info("Base URL")
     return app.send_static_file("index.html")
+
+######################################################################
+# Configure the Root route before OpenAPI
+######################################################################
+
+
+# Define the model so that the docs reflect what can be sent
+create_model = api.model('Recommendation', {
+    'Recommendation ID': fields.Integer(required=True, description='The ID of the Recommendation'),
+    'Product #1': fields.String(required=True, description='The name of Product 1'),
+    'Product #2': fields.String(required=True, description='The name of Product 2'),
+    'Liked': fields.Boolean(required=False, description='Does the customer dislike the recommendation?'),
+    'Type': fields.String(required=True, description='The type of the Recommendation'),
+    })
+
+recommendation_model = api.inherit(
+    'RecommendationModel',
+    create_model,
+    {
+        'Recommendation ID': fields.String(readOnly=True,
+                                           description='The unique id assigned internally by service'),
+    }
+)
+
+# query string arguments
+recommendation_args = reqparse.RequestParser()
+recommendation_args.add_argument('Recommendation ID', type=int, location='args',
+                                 required=False, help='List Recommendation by Recommendation ID')
 
 
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
+def abort(error_code: int, message: str):
+    """Logs errors before aborting"""
+    app.logger.error(message)
+    api.abort(error_code, message)
 
 
 def init_db():
@@ -87,6 +112,14 @@ def create_recommendation():
     app.logger.info("Request to create a recommendation")
     check_content_type("application/json")
     recommendation = Recommendation()
+
+    # if not recommendation.check_primary_key_valid(request.get_json()):
+    #        abort(status.HTTP_409_CONFLICT, "Primary key missing/invalid")
+    # recommendation.deserialize(request.get_json())
+
+    if not len(request.get_json()) > 0:
+        return "", status.HTTP_400_BAD_REQUEST
+
     recommendation.deserialize(request.get_json())
     is_duplicate = Recommendation.check_if_duplicate(
         recommendation.product_1, recommendation.product_2)
