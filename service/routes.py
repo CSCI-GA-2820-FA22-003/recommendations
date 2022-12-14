@@ -5,7 +5,7 @@ Describe what your service does here
 """
 
 from flask import jsonify, request, url_for
-from flask_restx import fields, reqparse
+from flask_restx import fields, reqparse, inputs
 
 from service.models import Recommendation
 
@@ -43,31 +43,40 @@ def index():
 
 # Define the model so that the docs reflect what can be sent
 create_model = api.model('Recommendation', {
-    'Recommendation ID': fields.Integer(required=True, description='The ID of the Recommendation'),
-    'Product #1': fields.String(required=True, description='The name of Product 1'),
-    'Product #2': fields.String(required=True, description='The name of Product 2'),
-    'Liked': fields.Boolean(required=False, description='Does the customer dislike the recommendation?'),
-    'Type': fields.String(required=True, description='The type of the Recommendation'),
+    'id': fields.Integer(required=True, description='The ID of the Recommendation'),
+    'product_1': fields.String(required=True, description='The name of Product 1'),
+    'product_2': fields.String(required=True, description='The name of Product 2'),
+    'liked': fields.Boolean(required=False,
+                            description='Does the customer dislike the recommendation?'),
+    'recommendation_type': fields.String(required=True,
+                                         description='The type of the Recommendation'),
     })
 
 recommendation_model = api.inherit(
     'RecommendationModel',
     create_model,
     {
-        'Recommendation ID': fields.String(readOnly=True,
-                                           description='The unique id assigned internally by service'),
+        'id': fields.String(readOnly=True,
+                            description='The unique id assigned internally by service'),
     }
 )
 
 # query string arguments
 recommendation_args = reqparse.RequestParser()
-recommendation_args.add_argument('Recommendation ID', type=int, location='args',
-                                 required=False, help='List Recommendation by Recommendation ID')
-
+recommendation_args.add_argument('product_1', type=str, location='args', required=False,
+                                 help='List Recs by product 1')
+recommendation_args.add_argument('product_2', type=str, location='args', required=False,
+                                 help='List Recs by product 2')
+recommendation_args.add_argument('recommendation_type', type=str, location='args', required=False,
+                                 help='List Recs by category')
+recommendation_args.add_argument('liked', type=inputs.boolean, location='args', required=False,
+                                 help='List Recs by liked')
 
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
+
+
 def abort(error_code: int, message: str):
     """Logs errors before aborting"""
     app.logger.error(message)
