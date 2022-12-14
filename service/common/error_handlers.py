@@ -21,7 +21,6 @@ Handles all of the HTTP Error Codes returning JSON messages
 from service.models import DataValidationError, DatabaseConnectionError
 from service import app, api
 from . import status
-from flask import jsonify
 
 ######################################################################
 # Special Error Handlers
