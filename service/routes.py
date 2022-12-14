@@ -64,7 +64,7 @@ recommendation_args = reqparse.RequestParser()
 recommendation_args.add_argument('product_1', type=str, location='args', required=False, help='List Recs by product 1')
 recommendation_args.add_argument('product_2', type=str, location='args', required=False, help='List Recs by product 2')
 recommendation_args.add_argument('recommendation_type', type=str, location='args', required=False,
-                                    help='List Recs by category')
+                                help='List Recs by category')
 recommendation_args.add_argument('liked', type=inputs.boolean, location='args', required=False, help='List Recs by liked')
 
 ######################################################################
