@@ -1,4 +1,4 @@
-# NYU DevOps Project Template
+# NYU DevOps - Recommendations 
 
 [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 [![Python](https://img.shields.io/badge/Language-Python-blue.svg)](https://python.org/)
@@ -6,25 +6,43 @@
 [![codecov](https://codecov.io/github/CSCI-GA-2820-FA22-003/recommendations/branch/master/graph/badge.svg?token=47AVM4J6V4)](https://codecov.io/github/CSCI-GA-2820-FA22-003/recommendations)
 
 
-This is a skeleton you can use to start your projects
-
-## Overview
+## Overview :memo:
 
 This project is a REST API service for recommendations. Each recommendation consists of product 1, product 2, type of recommendation, liked/disliked status.
 
-## Setup
+## Setup :hammer_and_wrench:
+:warning: Ensure Docker is installed and running :warning: 
 
-Use ``` git clone https://github.com/CSCI-GA-2820-FA22-003/recommendations.git``` to clone the repository in your local machine.
+Clone the repository
+``` 
+git clone https://github.com/CSCI-GA-2820-FA22-003/recommendations.git
+``` 
 
-Start the docker desktop, open the code in VSCode and click ```Reopen in Container```.
+Open project in VSCode
+```
+cd recommendations
+code .
+```
 
-And then, ``` honcho start ``` to start the flask server.
+Select ```Reopen in Container```
 
-## Endpoints
+Start the Service
 
-Devlopment Enviroment: http://169.51.206.138:31001/
+``` 
+honcho start 
+``` 
 
-Production Enviroment: http://169.51.206.138:31002/
+## Links :round_pushpin:
+
+Devlopment: 
+```
+http://169.51.206.138:31001/
+```
+
+Production: 
+```
+http://169.51.206.138:31002/
+```
 
 ## Contents
 
@@ -55,128 +73,137 @@ tests/              - test cases package
 ```
 
 
-## Running and testing Instructions
+## Running Tests :wrench:
 
-Run the server on cmd by using the command flask run and for tetsing use nosetests and postman.
+Running Unit Tests:
+```
+nosetests
+```
+Running BDD Tests
+```
+behave
+```
+:warning: Ensure the service is running before running ```behave``` :warning:
+## Endpoints :green_circle:
 
-## Endpoints
 
-
-**GET /recommendations/healthcheck:**
+```GET``` **/recommendations/healthcheck**
 
 <i>Gives the health.</i>
 
-Response Body:<br/>
-
-{<br/>
-    "message": "Healthy",<br/>
-    "status": 200<br/>
+Response Body:
+```
+{
+    "message": "Healthy",
+    "status": 200
 }
 
-<br/>
-<br/>
-
-**POST /recommendations :**
+```
+---
+```POST``` **/recommendations**
 
 <i>Creates a recommendation.</i>
 
-Request Body: <br/>
-{<br/>
-        "id": 0,<br/>
-        "liked": false,<br/>
-        "product_1": "aaaa",<br/>
-        "product_2": "bbbb",<br/>
-        "recommendation_type": "UP_SELL"<br/>
+Request Body: 
+```
+{
+    "id": 0,
+    "liked": False,
+    "product_1": "Phone",
+    "product_2": "Charger",
+    "recommendation_type": "UP_SELL"
 }
-
-Response Body:<br/>
-{<br/>
-    "id": 872,<br/>
-    "liked": false,<br/>
-    "product_1": "aaaa",<br/>
-    "product_2": "bbbb",<br/>
-    "recommendation_type": "UP_SELL"<br/>
+```
+Response Body:
+```
+{
+    "id": 872,
+    "liked": False,
+    "product_1": "Phone",
+    "product_2": "Charger",
+    "recommendation_type": "UP_SELL"
 }
-
+```
 The created record is returned in the response.
 
-<br/>
-<br/>
+---
 
-**GET /recommendations :**
+```GET``` **/recommendations**
 
 <i>Lists all the recommendation.</i>
 
-Response Body:<br/>
-
-[<br/>
-    {<br/>
-        "id": 841,<br/>
-        "liked": false,<br/>
-        "product_1": "a1",<br/>
-        "product_2": "d2",<br/>
-        "recommendation_type": "UP_SELL"<br/>
-    }<br/>
+Response Body:
+```
+[
+    {
+        "id": 841,
+        "liked": False,
+        "product_1": "Charger",
+        "product_2": "Phone Case",
+        "recommendation_type": "UP_SELL"
+    }
 ]
-
+```
 An array of all the recommendations is returned in the response.
 
-<br/>
-<br/>
-
-**PUT /recommendations/{recommendation_id} :**
+---
+```PUT``` **/recommendations/{recommendation_id}**
 
 <i>Updates the recommendation with the recommendation_id.</i>
 
-Request Body: <br/>
-{<br/>
-        "id": 872,<br/>
-        "liked": true,<br/>
-        "product_1": "aaaa",<br/>
-        "product_2": "bbbb",<br/>
-        "recommendation_type": "CROSS_SELL"<br/>
+Request Body: 
+```
+{
+        "id": 872,
+        "liked": True,
+        "product_1": "TV",
+        "product_2": "Monitor",
+        "recommendation_type": "CROSS_SELL"
 }
-
-Response Body:<br/>
-{<br/>
-    "id": 872,<br/>
-    "liked": true,<br/>
-    "product_1": "aaaa",<br/>
-    "product_2": "bbbb",<br/>
-    "recommendation_type": "CROSS_SELL"<br/>
+```
+Response Body:
+```
+{
+    "id": 872,
+    "liked": true,
+    "product_1": "TV",
+    "product_2": "Monitor",
+    "recommendation_type": "CROSS_SELL"
 }
-
+```
 The updated recommendation is returned in the response.
 
-<br/>
-<br/>
+---
 
-**GET /recommendations/{recommendation_id} :**
+```GET``` **/recommendations/{recommendation_id}**
 
 <i>Reads the recommendation with the recommendation_id.</i>
 
-Response Body ( GET http://localhost:8080/recommendations/872 ):<br/>
-{<br/>
-    "id": 872,<br/>
-    "liked": true,<br/>
-    "product_1": "aaaa",<br/>
-    "product_2": "bbbb",<br/>
-    "recommendation_type": "CROSS_SELL"<br/>
+Response Body:
+```
+{
+    "id": 872
+    "liked": true
+    "product_1": "TV",
+    "product_2": "Monitor",
+    "recommendation_type": "CROSS_SELL"
 }
-
+```
 The recommendation with the id as recommendation_id is returned in the response.
 
-<br/>
-<br/>
+---
 
-**DELETE /recommendations/{recommendation_id} :**
+```DELETE``` **/recommendations/{recommendation_id}**
 
 <i>Deletes the recommendation with the recommendation_id.</i>
 
-Response Body ( DELETE http://localhost:8080/recommendations/872 ):<br/>
-204NO CONTENT
+Response Body:
+```
+204 
+NO CONTENT
+```
 
-204 NO CONTENT is returned if the recommendation is delted or not present.
+```204 NO CONTENT``` is returned if the recommendation is deleted or not present.
 
 ## License
 
