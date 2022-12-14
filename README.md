@@ -22,9 +22,9 @@ And then, ``` honcho start ``` to start the flask server.
 
 ## Endpoints
 
-Devlopment Enviroment: http://169.51.206.124:31001/
+Devlopment Enviroment: http://169.51.206.138:31001/
 
-Production Enviroment: http://169.51.206.124:31002/
+Production Enviroment: http://169.51.206.138:31002/
 
 ## Contents
 
