@@ -61,7 +61,7 @@ recommendation_model = api.inherit(
 
 # query string arguments
 recommendation_args = reqparse.RequestParser()
-recommendation_args.add_argument('name', type=int, location='args',
+recommendation_args.add_argument('Recommendation ID', type=int, location='args',
                                  required=False, help='List Recommendation by Recommendation ID')
 
 
