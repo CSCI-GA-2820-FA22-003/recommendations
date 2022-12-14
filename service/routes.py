@@ -116,6 +116,10 @@ def create_recommendation():
     # if not recommendation.check_primary_key_valid(request.get_json()):
     #        abort(status.HTTP_409_CONFLICT, "Primary key missing/invalid")
     # recommendation.deserialize(request.get_json())
+
+    if not len(request.get_json()) > 0:
+        return "", status.HTTP_400_BAD_REQUEST
+
     recommendation.deserialize(request.get_json())
     is_duplicate = Recommendation.check_if_duplicate(
         recommendation.product_1, recommendation.product_2)
