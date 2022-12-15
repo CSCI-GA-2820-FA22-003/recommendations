@@ -18,7 +18,7 @@ from tests.factories import RecommendationFactory  # HTTP Status Codes
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/testdb"
 )
-BASE_URL = "/recommendations"
+BASE_URL = "/api/recommendations"
 
 ######################################################################
 #  T E S T   C A S E S
@@ -87,7 +87,7 @@ class TestYourResourceServer(TestCase):
         logging.debug("Test Recommendation: %s",
                       test_recommendation.serialize())
         response = self.client.post(
-            "/recommendations", json=test_recommendation.serialize())
+            BASE_URL, json=test_recommendation.serialize())
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
         # Check the data is correct
