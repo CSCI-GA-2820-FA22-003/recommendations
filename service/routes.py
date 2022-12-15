@@ -114,8 +114,6 @@ def check_content_type(content_type):
 @api.route('/recommendations', strict_slashes=False)
 class PetCollection(Resource):
     """ Handles all interactions with collections of recommendations """
-    @app.route("/recommendations", methods=["POST"])
-
     @api.doc('create_recommendation')
     @api.response(400, 'The posted data was not valid')
     @api.expect(create_model)
@@ -142,9 +140,8 @@ class PetCollection(Resource):
             abort(status.HTTP_406_NOT_ACCEPTABLE, "Recommendation with products" +
                 "'{recommendation.product_1}' and '{recommendation.product_1}'  already exists.")
         recommendation.create()
-        message = recommendation.serialize()
         location_url = api.url_for(RecommendationResource,
-                            recommendation_id=recommendation.id, _external=True)
+                                    recommendation_id=recommendation.id, _external=True)
         app.logger.info("Recommendation with ID [%s] created.", recommendation.id)
         return recommendation.serialize(), status.HTTP_201_CREATED, {"Location": location_url}
 
@@ -197,13 +194,13 @@ class RecommendationResource(Resource):
         """Returns a Recommendation requested by it's ID"""
         app.logger.info("Request for a recommendation id=%s", recommendation_id)
         recommendation = Recommendation.find(recommendation_id)
-        if recommendation is not None:
-            result = recommendation.serialize()
-            app.logger.info(
-                "Recommendation with ID [%s] has been read", recommendation.id)
-            return result, status.HTTP_200_OK
-        abort(status.HTTP_404_NOT_FOUND,
-                f"Recommendation with id '{recommendation_id}' was not found.")
+        if recommendation is None:
+            abort(status.HTTP_404_NOT_FOUND,
+                  f"Recommendation with id '{recommendation_id}' was not found.")
+        result = recommendation.serialize()
+        app.logger.info(
+            "Recommendation with ID [%s] has been read", recommendation.id)
+        return result, status.HTTP_200_OK
 
 
     ######################################################################
@@ -308,7 +305,7 @@ class LikeRecommendation(Resource):
         recommendation = Recommendation.find(recommendation_id)
         if not recommendation:
             abort(status.HTTP_404_NOT_FOUND,
-                f"Recommendation with id '{recommendation_id}' was not found.")
+                  f"Recommendation with id '{recommendation_id}' was not found.")
 
         recommendation.liked = False
         recommendation.update()
