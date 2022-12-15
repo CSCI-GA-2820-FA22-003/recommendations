@@ -49,7 +49,7 @@ create_model = api.model('Recommendation', {
                             description='Does the customer dislike the recommendation?'),
     'recommendation_type': fields.String(required=True,
                                          description='The type of the Recommendation'),
-    })
+})
 
 recommendation_model = api.inherit(
     'RecommendationModel',
@@ -138,17 +138,18 @@ class PetCollection(Resource):
                 "Recommendation with products [%s] and [%s] already exists.",
                 recommendation.product_1, recommendation.product_2)
             abort(status.HTTP_406_NOT_ACCEPTABLE, "Recommendation with products" +
-                "'{recommendation.product_1}' and '{recommendation.product_1}'  already exists.")
+                  "'{recommendation.product_1}' and '{recommendation.product_1}'  already exists.")
         recommendation.create()
         location_url = api.url_for(RecommendationResource,
-                                    recommendation_id=recommendation.id, _external=True)
-        app.logger.info("Recommendation with ID [%s] created.", recommendation.id)
+                                   recommendation_id=recommendation.id, _external=True)
+        app.logger.info(
+            "Recommendation with ID [%s] created.", recommendation.id)
         return recommendation.serialize(), status.HTTP_201_CREATED, {"Location": location_url}
-
 
     ######################################################################
     # LIST ALL Recommendations
     ######################################################################
+
     @api.doc('list_recommendations')
     @api.marshal_list_with(recommendation_model)
     def get(self):
@@ -168,7 +169,7 @@ class PetCollection(Resource):
             recommendations = Recommendation.all()
 
         results = [recommendation.serialize()
-                for recommendation in recommendations]
+                   for recommendation in recommendations]
         app.logger.info("Returning %d recommendations", len(results))
         return results, status.HTTP_200_OK
 
@@ -192,7 +193,8 @@ class RecommendationResource(Resource):
     @api.marshal_with(recommendation_model)
     def get(self, recommendation_id):
         """Returns a Recommendation requested by it's ID"""
-        app.logger.info("Request for a recommendation id=%s", recommendation_id)
+        app.logger.info("Request for a recommendation id=%s",
+                        recommendation_id)
         recommendation = Recommendation.find(recommendation_id)
         if recommendation is None:
             abort(status.HTTP_404_NOT_FOUND,
@@ -202,10 +204,10 @@ class RecommendationResource(Resource):
             "Recommendation with ID [%s] has been read", recommendation.id)
         return result, status.HTTP_200_OK
 
-
     ######################################################################
     # UPDATE AN EXISTING RECOMMENDATION
     ######################################################################
+
     @api.doc('update_recommendations')
     @api.response(404, 'Recommendation not found')
     @api.response(400, 'The posted Recommendation data was not valid')
@@ -223,19 +225,20 @@ class RecommendationResource(Resource):
         recommendation = Recommendation.find(recommendation_id)
         if not recommendation:
             abort(status.HTTP_404_NOT_FOUND,
-                f"Recommendation with id '{recommendation_id}' was not found.")
+                  f"Recommendation with id '{recommendation_id}' was not found.")
 
         recommendation.deserialize(request.get_json())
         recommendation.id = recommendation_id
         recommendation.update()
 
-        app.logger.info("Recommendation with ID [%s] updated.", recommendation.id)
+        app.logger.info(
+            "Recommendation with ID [%s] updated.", recommendation.id)
         return recommendation.serialize(), status.HTTP_200_OK
-
 
     ######################################################################
     # DELETE A RECOMMENDATION
     ######################################################################
+
     @api.doc('delete_recommendations')
     @api.response(204, 'Recommendation deleted')
     @api.response(404, 'Recommendation not found')
@@ -279,18 +282,19 @@ class LikeRecommendation(Resource):
         recommendation = Recommendation.find(recommendation_id)
         if not recommendation:
             abort(status.HTTP_404_NOT_FOUND,
-                f"Recommendation with id '{recommendation_id}' was not found.")
+                  f"Recommendation with id '{recommendation_id}' was not found.")
 
         recommendation.liked = True
         recommendation.update()
 
-        app.logger.info("Recommendation with ID [%s] liked.", recommendation.id)
+        app.logger.info(
+            "Recommendation with ID [%s] liked.", recommendation.id)
         return recommendation.serialize(), status.HTTP_200_OK
-
 
     ######################################################################
     # DISLIKE A RECOMMENDATION
     ######################################################################
+
     @api.doc('dislike_recommendations')
     @api.response(404, 'Recommendation not found')
     def delete(self, recommendation_id):
@@ -310,5 +314,6 @@ class LikeRecommendation(Resource):
         recommendation.liked = False
         recommendation.update()
 
-        app.logger.info("Recommendation with ID [%s] disliked.", recommendation.id)
+        app.logger.info(
+            "Recommendation with ID [%s] disliked.", recommendation.id)
         return recommendation.serialize(), status.HTTP_200_OK
